@@ -1,8 +1,10 @@
-package com.ahmedg.tripplannerpro;
+package com.ahmedg.tripplannerpro.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.ahmedg.tripplannerpro.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -11,8 +13,5 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
-    //wesam comment
-    //Ahmed From Branch
-    //Ahmed 2 From branch
-    //wesam branch
+
 }
