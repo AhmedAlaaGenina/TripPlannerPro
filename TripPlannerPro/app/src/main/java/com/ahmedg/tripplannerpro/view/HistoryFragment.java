@@ -44,9 +44,9 @@ public class HistoryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         tripModels = new ArrayList<>();
-        for (int i = 0 ; i < images.length ; i++){
-            tripModels.add(new TripModel(tripsName[i],source[i],destination[i],true));
-        }
+//        for (int i = 0 ; i < images.length ; i++){
+//            tripModels.add(new TripModel(tripsName[i],source[i],destination[i],true));
+//        }
         recyclerView = view.findViewById(R.id.historyRv);
         mCtx = getActivity();
         //recyclerView.setLayoutManager(new GridLayoutManager(this,2));

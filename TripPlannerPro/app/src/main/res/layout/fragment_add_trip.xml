@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/addTripLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.AddTripFragment">
+
+    <EditText
+        android:id="@+id/edtTextNameOfTrip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/nameOfTrip"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/edtTxtStartPointOfTrip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/edtTxtStartPointOfTrip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/startPointOfTrip"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/txtViewDate"
+        app:layout_constraintEnd_toStartOf="@+id/edtTxtEndPointOfTrip"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtTextNameOfTrip" />
+
+    <EditText
+        android:id="@+id/edtTxtEndPointOfTrip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/endPointOfTrip"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/txtViewTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/edtTxtStartPointOfTrip"
+        app:layout_constraintTop_toBottomOf="@+id/edtTextNameOfTrip" />
+
+    <TextView
+        android:id="@+id/txtViewDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="@string/selectData"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/spinnerTime"
+        app:layout_constraintEnd_toStartOf="@+id/txtViewTime"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtTxtStartPointOfTrip"
+        app:drawableEndCompat="@drawable/ic_baseline_calendar_today_24" />
+
+    <TextView
+        android:id="@+id/txtViewTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="@string/selectTime"
+        android:textSize="24sp"
+        app:drawableEndCompat="@drawable/ic_baseline_access_time_24"
+        app:layout_constraintBottom_toTopOf="@+id/spinnerTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/txtViewDate"
+        app:layout_constraintTop_toBottomOf="@+id/edtTxtEndPointOfTrip" />
+
+    <Button
+        android:id="@+id/btnAddThisTrip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/add_this_trip"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddNotes" />
+
+    <Button
+        android:id="@+id/btnAddNotes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/addNotes"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddThisTrip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerDiraction" />
+
+    <Spinner
+        android:id="@+id/spinnerTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/spinnerDiraction"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtViewDate" />
+
+    <Spinner
+        android:id="@+id/spinnerDiraction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddNotes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerTime" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

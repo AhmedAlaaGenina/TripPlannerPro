@@ -5,10 +5,24 @@
     <string name="account">Account</string>
     <string name="sync">Sync</string>
     <string name="add_button">add button</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
     -->
+    <string name="addTrip">Add Trip</string>
+    <string name="nameOfTrip">Name Of Trip</string>
+    <string name="startPointOfTrip">Start Point Of Trip</string>
+    <string name="endPointOfTrip">End Point Of Trip</string>
+    <string name="selectTime">Select Time</string>
+    <string name="selectData">Select Date</string>
+    <string name="addNotes">Add Notes</string>
+    <string name="add_note">Add Note</string>
+    <string name="add_your_note">Add your Note</string>
+    <string name="no_data_found">No Data Found</string>
+    <string name="swipe_to_delete">Swipe to Delete</string>
+    <string name="direction">Direction</string>
+    <string name="repetition">Repetition</string>
+    <string name="save">Save</string>
+    <string name="add_this_trip">Add This Trip</string>
 </resources>
