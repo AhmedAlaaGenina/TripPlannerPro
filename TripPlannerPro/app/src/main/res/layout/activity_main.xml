@@ -1,18 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.MainActivity">
-
-    <TextView
+    <!--    app:navigationIcon="@drawable/history"-->
+    <FrameLayout
+        android:id="@+id/contanier"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="96dp"/>
+<com.google.android.material.bottomappbar.BottomAppBar
+    android:id="@+id/curvedBottomBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    app:fabAlignmentMode="center"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    app:fabCradleMargin="10dp"
+    app:fabCradleRoundedCornerRadius="50dp"
+    app:fabCradleVerticalOffset="2dp"
+    app:hideOnScroll="true"
+    android:backgroundTint="@color/primary_color">
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        app:menu="@menu/curved_bottom_bar_menu"
+        android:foreground="?attr/selectableItemBackground"
+        app:itemIconTint="@color/light_primary_color"
+        app:itemIconSize="33dp"
+        app:itemTextColor="@color/light_primary_color"
+        android:layout_marginEnd="16dp"/>
+</com.google.android.material.bottomappbar.BottomAppBar>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Trip Planner Pro "
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:src="@drawable/add"
+        android:backgroundTint="@color/accent_color"
+        app:layout_anchor="@id/curvedBottomBar"
+        app:maxImageSize="35dp"
+        android:tint="@color/white"
+        android:contentDescription="@string/add_button"
+        />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
