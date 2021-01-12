@@ -32,7 +32,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
 
     @Override
     public int getItemCount() {
-        return noteList.size();
+       return noteList == null ? 0 : noteList.size();
     }
 
     public void setDataList(ArrayList<String> noteList) {

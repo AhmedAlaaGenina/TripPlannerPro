@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.ahmedg.tripplannerpro.R;
@@ -83,7 +84,6 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onSuccess(@NonNull List<TripModel> tripModels) {
                         homeTripAdapter.setDataList(tripModels);
-                        Toast.makeText(getContext(), "Done", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -91,8 +91,6 @@ public class HomeFragment extends Fragment {
                         Toast.makeText(view.getContext(), "Data Error", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
 
         return view;
     }

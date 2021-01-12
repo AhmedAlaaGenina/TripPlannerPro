@@ -105,7 +105,7 @@ public class TripModel {
         this.repetition = repetition;
     }
 
-    public ArrayList<String> getNotes() {
+    public  ArrayList<String> getNotes() {
         return notes;
     }
 

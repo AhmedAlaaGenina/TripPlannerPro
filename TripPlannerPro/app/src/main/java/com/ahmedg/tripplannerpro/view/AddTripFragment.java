@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,8 +51,9 @@ import static android.app.Activity.RESULT_OK;
 public class AddTripFragment extends Fragment {
     private static final int PLACE_API_START = 100;
     private static final int PLACE_API_END = 101;
-    private static final String NOTE_FRAGMENT = "NOTE_FRAGMENT";
+    public static final String NOTE_FRAGMENT = "NOTE_FRAGMENT";
     private static final String MAIN_FRAGMENT = "MAIN_FRAGMENT";
+    public static final String NOTE_BACK = "NOTE_BACK";
 
     View view;
     Calendar calendar;
@@ -67,6 +69,7 @@ public class AddTripFragment extends Fragment {
     String[] direction = {"One Direction", "Round Trip"};
     TripDataBase tripDataBase;
     ArrayList<String> notesList;
+    Bundle bundle;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,7 +89,7 @@ public class AddTripFragment extends Fragment {
         myYear = calendar.get(calendar.YEAR);
         myMonth = calendar.get(calendar.MONTH);
         myDay = calendar.get(calendar.DAY_OF_MONTH);
-        Bundle bundle = this.getArguments();
+        bundle = this.getArguments();
 
 
         //Fragment Note
@@ -107,7 +110,6 @@ public class AddTripFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 directionWord = parent.getItemAtPosition(position).toString();
-                Toast.makeText(parent.getContext(), "Selected: " + directionWord, Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -124,7 +126,6 @@ public class AddTripFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 repetitionWord = parent.getItemAtPosition(position).toString();
-                Toast.makeText(parent.getContext(), "Selected: " + repetitionWord, Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -206,42 +207,51 @@ public class AddTripFragment extends Fragment {
         btnAddThisTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tripName = edtTxtNameTrip.getText().toString();
-                startPoint = edtTxtStartPoint.getText().toString();
-                endPoint = edtTxtEndPoint.getText().toString();
-                date = txtViewDate.getText().toString();
-                time = txtViewTime.getText().toString();
-                if (bundle!= null) {
-                    notesList = bundle.getStringArrayList(NoteFragment.NOTES_KEY);
+                if (!TextUtils.isEmpty(edtTxtNameTrip.getText().toString()) &&
+                        !TextUtils.isEmpty(edtTxtStartPoint.getText().toString()) &&
+                        !TextUtils.isEmpty(edtTxtEndPoint.getText().toString()) &&
+                        !TextUtils.isEmpty(txtViewDate.getText().toString()) &&
+                        !TextUtils.isEmpty(txtViewTime.getText().toString())
+                ) {
+                    tripName = edtTxtNameTrip.getText().toString();
+                    startPoint = edtTxtStartPoint.getText().toString();
+                    endPoint = edtTxtEndPoint.getText().toString();
+                    date = txtViewDate.getText().toString();
+                    time = txtViewTime.getText().toString();
+                    if (bundle != null) {
+                        notesList = bundle.getStringArrayList(NoteFragment.NOTES_KEY);
+                    }
+                    tripDataBase.tripDao().insertTrip(new TripModel(tripName, startPoint, endPoint, true
+                            , date, time, directionWord, repetitionWord, notesList))
+                            .subscribeOn(Schedulers.computation())
+                            .subscribe(new CompletableObserver() {
+                                @Override
+                                public void onSubscribe(@NonNull Disposable d) {
+
+                                }
+
+                                @Override
+                                public void onComplete() {
+                                    Toast.makeText(view.getContext(), "Trip Add", Toast.LENGTH_SHORT).show();
+                                    Log.i("TAG", "onComplete: Trip Add");
+
+                                }
+
+                                @Override
+                                public void onError(@NonNull Throwable e) {
+                                    Toast.makeText(view.getContext(), "Trip Not Add", Toast.LENGTH_SHORT).show();
+                                    Log.i("TAG", "onError: Not Add");
+
+                                }
+                            });
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.container, new HomeFragment(), MAIN_FRAGMENT)
+                            .addToBackStack(null)
+                            .commit();
+                } else {
+                    Toast.makeText(view.getContext(), "Please Add All Data", Toast.LENGTH_SHORT).show();
                 }
-                tripDataBase.tripDao().insertTrip(new TripModel(tripName, startPoint, endPoint, true
-                        , date, time, directionWord, repetitionWord, notesList))
-                        .subscribeOn(Schedulers.computation())
-                        .subscribe(new CompletableObserver() {
-                            @Override
-                            public void onSubscribe(@NonNull Disposable d) {
-
-                            }
-
-                            @Override
-                            public void onComplete() {
-                                Toast.makeText(view.getContext(), "Trip Add", Toast.LENGTH_SHORT).show();
-                                Log.i("TAG", "onComplete: Trip Add");
-
-                            }
-
-                            @Override
-                            public void onError(@NonNull Throwable e) {
-                                Toast.makeText(view.getContext(), "Trip Not Add", Toast.LENGTH_SHORT).show();
-                                Log.i("TAG", "onError: Not Add");
-
-                            }
-                        });
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, new HomeFragment(), MAIN_FRAGMENT)
-                        .addToBackStack(null)
-                        .commit();
             }
         });
         return view;

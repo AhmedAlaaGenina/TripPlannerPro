@@ -1,8 +1,11 @@
 package com.ahmedg.tripplannerpro.view;
 
+import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,19 +20,21 @@ import java.util.List;
 
 public class HomeTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<TripModel> tripModelArrayList = new ArrayList<>();
+    Context context;
 
-//    public HomeTripAdapter(ArrayList<TripModel> tripModelArrayList) {
+    //    public HomeTripAdapter(ArrayList<TripModel> tripModelArrayList) {
 //        this.tripModelArrayList = tripModelArrayList;
 //    }
     public void setDataList(List<TripModel> list) {
         this.tripModelArrayList = list;
         notifyDataSetChanged();
     }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.trip_item_home, parent, false);
-
+        this.context = parent.getContext();
         return new HomeTripViewHolder(v);
     }
 
@@ -42,6 +47,16 @@ public class HomeTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         tripViewHolder.destination.setText(tripModel.getDestination());
         tripViewHolder.date.setText(tripModel.getDate());
         tripViewHolder.time.setText(tripModel.getTime());
+        tripViewHolder.btnNotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                (Activity)context.getActivity().getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .replace(R.id.container, new NoteFragment(), AddTripFragment.NOTE_FRAGMENT)
+//                        .addToBackStack(null)
+//                        .commit();
+            }
+        });
         if (tripModel.isStatus()) {
             tripViewHolder.status.setVisibility(View.VISIBLE);
             tripViewHolder.status.setImageResource(R.drawable.status_done);
@@ -61,6 +76,7 @@ public class HomeTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     class HomeTripViewHolder extends RecyclerView.ViewHolder {
         TextView tripName, source, destination, date, time;
         ImageView status;
+        Button btnNotes;
 
         public HomeTripViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -70,6 +86,8 @@ public class HomeTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             date = itemView.findViewById(R.id.dateTv);
             time = itemView.findViewById(R.id.timeTv);
             status = itemView.findViewById(R.id.statusIv);
+            btnNotes = itemView.findViewById(R.id.notesBtn);
+
         }
     }
 }

@@ -4,6 +4,7 @@ package com.ahmedg.tripplannerpro.view;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,9 +32,9 @@ public class NoteFragment extends Fragment {
     Button btnAddNote, btnSaveNotes;
     EditText edTextNote;
     ArrayList<String> list;
-    ArrayList<String> eList;
     TextView tvEmpty;
     Bundle bundle;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,14 +49,17 @@ public class NoteFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
-        list = new ArrayList<>();
-        eList = new ArrayList<>();
-        eList.add("No Notes");
         new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(noteListAdapter);
         bundle = new Bundle();
+        if (savedInstanceState == null) {
+            list = new ArrayList<>();
+        } else {
+            list = savedInstanceState.getStringArrayList(NOTES_KEY);
+        }
 
-        if (list.size() == 0) {
+        noteListAdapter.setDataList(list);
+        if (list.isEmpty()) {
             tvEmpty.setVisibility(View.VISIBLE);
         }
 
@@ -67,11 +71,7 @@ public class NoteFragment extends Fragment {
                     String note = edTextNote.getText().toString();
                     list.add(note);
                     noteListAdapter.setDataList(list);
-                    if (!list.isEmpty()) {
-                        bundle.putStringArrayList(NOTES_KEY, list);
-                    } else {
-                        bundle.putStringArrayList(NOTES_KEY, eList);
-                    }
+                    bundle.putStringArrayList(NOTES_KEY, list);
                     edTextNote.setText("");
                     tvEmpty.setVisibility(View.GONE);
                     Log.i("TAG", "onCreateView: " + list.toString());
@@ -85,7 +85,7 @@ public class NoteFragment extends Fragment {
             public void onClick(View v) {
                 AddTripFragment tripFragment = new AddTripFragment();
                 tripFragment.setArguments(bundle);
-                getFragmentManager().beginTransaction()
+                getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, tripFragment, HomeFragment.ADD_TRIP_FRAGMENT)
                         .addToBackStack(null)
                         .commit();
@@ -104,6 +104,13 @@ public class NoteFragment extends Fragment {
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             list.remove(viewHolder.getAdapterPosition());
             noteListAdapter.notifyDataSetChanged();
+
         }
     };
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList(NOTES_KEY, list);
+    }
 }
