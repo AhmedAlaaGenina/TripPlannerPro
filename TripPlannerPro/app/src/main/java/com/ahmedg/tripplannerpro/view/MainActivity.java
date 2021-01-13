@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         btnAddNewTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              getSupportFragmentManager()
+                getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, new AddTripFragment(), ADD_TRIP_FRAGMENT)
                         .addToBackStack(null)
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        btnAddNewTrip=findViewById(R.id.btnAddNewTrip);
+        btnAddNewTrip = findViewById(R.id.btnAddNewTrip);
     }
 
     private void loadFragment(Fragment fragment) {
@@ -79,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.account) {
             loadFragment(new ProfileFragment());
 
+        } else if (id == R.id.sync) {
+            //sync Data With Firebase......
         }
     }
 

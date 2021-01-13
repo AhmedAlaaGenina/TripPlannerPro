@@ -21,8 +21,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ahmedg.tripplannerpro.R;
+import com.ahmedg.tripplannerpro.model.TripDataBase;
+import com.ahmedg.tripplannerpro.model.TripModel;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class NoteFragment extends Fragment {
     public static final String NOTES_KEY = "NOTES_KEY";
@@ -33,8 +41,7 @@ public class NoteFragment extends Fragment {
     EditText edTextNote;
     ArrayList<String> list;
     TextView tvEmpty;
-    Bundle bundle;
-
+    Bundle bundle,bundle1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,6 +59,13 @@ public class NoteFragment extends Fragment {
         new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(noteListAdapter);
         bundle = new Bundle();
+
+        bundle1 = this.getArguments();
+
+        if (bundle != null) {
+            list = bundle.getStringArrayList(AddTripFragment.NOTE_BACK);
+        }
+
         if (savedInstanceState == null) {
             list = new ArrayList<>();
         } else {

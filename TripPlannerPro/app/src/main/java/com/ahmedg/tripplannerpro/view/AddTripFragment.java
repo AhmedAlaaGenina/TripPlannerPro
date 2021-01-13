@@ -91,7 +91,9 @@ public class AddTripFragment extends Fragment {
         myDay = calendar.get(calendar.DAY_OF_MONTH);
         bundle = this.getArguments();
 
-
+        if (bundle != null) {
+            notesList = bundle.getStringArrayList(NoteFragment.NOTES_KEY);
+        }
         //Fragment Note
         btnAddNotes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,9 +220,6 @@ public class AddTripFragment extends Fragment {
                     endPoint = edtTxtEndPoint.getText().toString();
                     date = txtViewDate.getText().toString();
                     time = txtViewTime.getText().toString();
-                    if (bundle != null) {
-                        notesList = bundle.getStringArrayList(NoteFragment.NOTES_KEY);
-                    }
                     tripDataBase.tripDao().insertTrip(new TripModel(tripName, startPoint, endPoint, true
                             , date, time, directionWord, repetitionWord, notesList))
                             .subscribeOn(Schedulers.computation())

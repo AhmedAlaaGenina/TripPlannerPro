@@ -1,8 +1,11 @@
 package com.ahmedg.tripplannerpro.view;
 
+import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +16,7 @@ import com.ahmedg.tripplannerpro.R;
 import com.ahmedg.tripplannerpro.model.TripModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTripViewHolder> {
     private ArrayList<TripModel> tripModelArrayList = new ArrayList<>();
@@ -26,7 +30,6 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
 
     @Override
     public void onBindViewHolder(@NonNull HomeTripViewHolder holder, int position) {
-
         holder.tripName.setText(tripModelArrayList.get(position).getTripName());
         holder.source.setText(tripModelArrayList.get(position).getSource());
         holder.destination.setText(tripModelArrayList.get(position).getDestination());
@@ -70,7 +73,6 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
             date = itemView.findViewById(R.id.dateTv);
             time = itemView.findViewById(R.id.timeTv);
             status = itemView.findViewById(R.id.statusIv);
-
         }
     }
 }

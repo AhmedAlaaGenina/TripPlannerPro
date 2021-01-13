@@ -25,5 +25,11 @@ public interface TripDao {
     @Delete
     Completable deleteTrip(TripModel tripModel);
 
+    @Query("UPDATE trip_table set tripName= :tripName ,source =:source,destination=:destination ,status=:status,date=:date," +
+            "time=:time,direction=:direction,repetition=:repetition,notes=:notes WHERE id=:id")
+    Completable update(int id,String tripName, String source, String destination, boolean status,
+                       String date, String time, String direction, String repetition, ArrayList<String> notes);
 
+    @Query("select notes from trip_table WHERE id")
+    Single<List<String>>getListNotes();
 }

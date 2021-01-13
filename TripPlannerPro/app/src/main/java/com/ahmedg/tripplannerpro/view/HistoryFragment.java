@@ -20,12 +20,11 @@ import java.util.ArrayList;
 public class HistoryFragment extends Fragment {
 
     private int[] images = {R.drawable.status_cancel, R.drawable.status_done};
-    private String[] tripsName = {"ITI ", "Journey"};
-    private String[] source = {"Zagizag ", "Mansoura"};
-    private String[] destination = {"Mansoura ", "Zagizag"};
+
     private RecyclerView recyclerView;
-    private ArrayList<TripModel> tripModels;
     private Context mCtx;
+    HistoryTripAdapter historyTripAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,18 +40,12 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_history, container, false);
-        tripModels = new ArrayList<>();
-//        for (int i = 0 ; i < images.length ; i++){
-//            tripModels.add(new TripModel(tripsName[i],source[i],destination[i],true));
-//        }
         recyclerView = view.findViewById(R.id.historyRv);
         mCtx = getActivity();
-        //recyclerView.setLayoutManager(new GridLayoutManager(this,2));
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(mCtx));
-        HistoryTripAdapter historyTripAdapter = new HistoryTripAdapter(tripModels);
+        historyTripAdapter = new HistoryTripAdapter();
         recyclerView.setAdapter(historyTripAdapter);
         return view;
     }

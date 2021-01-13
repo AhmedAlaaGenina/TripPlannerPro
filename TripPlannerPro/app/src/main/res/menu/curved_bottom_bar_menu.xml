@@ -17,6 +17,7 @@
         app:showAsAction="always"/>
     <item
         android:title="@string/sync"
+        android:id="@+id/sync"
         android:icon="@drawable/sync"
         app:showAsAction="always"/>
 </menu>

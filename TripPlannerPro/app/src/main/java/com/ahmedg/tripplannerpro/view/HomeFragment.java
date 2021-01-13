@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +39,10 @@ public class HomeFragment extends Fragment {
     private String[] destination = {"Mansoura ", "Zagizag"};
     private RecyclerView recyclerView;
     HomeTripAdapter homeTripAdapter;
-    private ArrayList<TripModel> tripModels;
     private Context mCtx;
     TripDataBase tripDataBase;
     View view;
+
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -97,7 +98,6 @@ public class HomeFragment extends Fragment {
         @Override
         public void onSwiped(@androidx.annotation.NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
-
             tripDataBase.tripDao().deleteTrip(homeTripAdapter.getModelArrayList().get(viewHolder.getAdapterPosition())).subscribeOn(Schedulers.computation())
                     .subscribe(new CompletableObserver() {
                         @Override
@@ -114,6 +114,7 @@ public class HomeFragment extends Fragment {
 
                         }
                     });
+
             homeTripAdapter.getModelArrayList().remove(viewHolder.getAdapterPosition());
             homeTripAdapter.notifyDataSetChanged();
 
