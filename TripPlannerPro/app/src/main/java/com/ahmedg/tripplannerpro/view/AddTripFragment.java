@@ -234,7 +234,6 @@ public class AddTripFragment extends Fragment {
                                 public void onComplete() {
                                     Toast.makeText(view.getContext(), "Trip Add", Toast.LENGTH_SHORT).show();
                                     Log.i("TAG", "onComplete: Trip Add");
-
                                 }
 
                                 @Override
@@ -244,16 +243,17 @@ public class AddTripFragment extends Fragment {
 
                                 }
                             });
-                    getActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.container, new HomeFragment(), MAIN_FRAGMENT)
-                            .addToBackStack(null)
-                            .commit();
+                    edtTxtNameTrip.setText("");
+                    edtTxtStartPoint.setText("");
+                    edtTxtEndPoint.setText("");
+                    txtViewDate.setText("");
+                    txtViewTime.setText("");
                 } else {
                     Toast.makeText(view.getContext(), "Please Add All Data", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
         return view;
     }
 
