@@ -10,10 +10,23 @@ import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.ahmedg.tripplannerpro.R;
+import com.ahmedg.tripplannerpro.model.TripDataBase;
+import com.ahmedg.tripplannerpro.model.TripModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     public static final String ADD_TRIP_FRAGMENT = "AddNewTripFragment";
@@ -22,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     HomeFragment homeFragment;
     FloatingActionButton btnAddNewTrip;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference myRef, newRef;
+    TripDataBase tripDataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
         init();
         bottomNavigationView.setBackground(null);
         bottomNavigationView.getMenu().getItem(2).setEnabled(false);
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = firebaseDatabase.getReference().child("trips");
+        newRef = myRef.push();
+        tripDataBase = TripDataBase.getInstance(getApplicationContext());
         if (savedInstanceState != null) {
             return;
         } else {
@@ -81,6 +101,25 @@ public class MainActivity extends AppCompatActivity {
 
         } else if (id == R.id.sync) {
             //sync Data With Firebase......
+            tripDataBase.tripDao().getTrips().subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<List<TripModel>>() {
+                        @Override
+                        public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onSuccess(@io.reactivex.annotations.NonNull List<TripModel> tripModels) {
+                            newRef.setValue(tripModels);
+                            Toast.makeText(MainActivity.this, "Sync Done!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+
+                        }
+                    });
         }
     }
 
@@ -102,4 +141,5 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState, outPersistentState);
         getSupportFragmentManager().putFragment(outState, TAG, homeFragment);
     }
+
 }

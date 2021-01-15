@@ -11,11 +11,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.ahmedg.tripplannerpro.R;
+import com.ahmedg.tripplannerpro.model.TripDataBase;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteViewHolder> {
     private ArrayList<String> noteList = new ArrayList<>();
+
 
     @NonNull
     @Override
@@ -32,20 +40,20 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
 
     @Override
     public int getItemCount() {
-       return noteList == null ? 0 : noteList.size();
+        return noteList == null ? 0 : noteList.size();
     }
 
     public void setDataList(ArrayList<String> noteList) {
         this.noteList = noteList;
         notifyDataSetChanged();
     }
-    public ArrayList<String> getDataList(){
+
+    public ArrayList<String> getDataList() {
         return noteList;
     }
 
     public class NoteViewHolder extends RecyclerView.ViewHolder {
         TextView tvNoteName;
-
 
         @SuppressLint("ResourceType")
         public NoteViewHolder(@NonNull View itemView) {
@@ -53,4 +61,5 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NoteVi
             tvNoteName = itemView.findViewById(R.id.noteText);
         }
     }
+
 }

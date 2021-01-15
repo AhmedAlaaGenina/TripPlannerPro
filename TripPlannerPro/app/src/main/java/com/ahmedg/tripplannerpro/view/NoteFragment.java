@@ -27,6 +27,7 @@ import com.ahmedg.tripplannerpro.model.TripModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Scheduler;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -41,31 +42,14 @@ public class NoteFragment extends Fragment {
     EditText edTextNote;
     ArrayList<String> list;
     TextView tvEmpty;
-    Bundle bundle,bundle1;
+    Bundle bundle, bundle1;
+    TripDataBase tripDataBase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_note, container, false);
-        noteListAdapter = new NoteListAdapter();
-        recyclerView = view.findViewById(R.id.rcvNotes);
-        btnAddNote = view.findViewById(R.id.btnAddNote);
-        btnSaveNotes = view.findViewById(R.id.btnSaveNotes);
-        edTextNote = view.findViewById(R.id.etNoteText);
-        tvEmpty = view.findViewById(R.id.tv_empty);
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setHasFixedSize(true);
-        new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
-        recyclerView.setAdapter(noteListAdapter);
-        bundle = new Bundle();
-
-        bundle1 = this.getArguments();
-
-        if (bundle != null) {
-            list = bundle.getStringArrayList(AddTripFragment.NOTE_BACK);
-        }
-
+        init();
         if (savedInstanceState == null) {
             list = new ArrayList<>();
         } else {
@@ -108,6 +92,29 @@ public class NoteFragment extends Fragment {
         return view;
     }
 
+    private void init() {
+        noteListAdapter = new NoteListAdapter();
+        recyclerView = view.findViewById(R.id.rcvNotes);
+        btnAddNote = view.findViewById(R.id.btnAddNote);
+        btnSaveNotes = view.findViewById(R.id.btnSaveNotes);
+        edTextNote = view.findViewById(R.id.etNoteText);
+        tvEmpty = view.findViewById(R.id.tv_empty);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setHasFixedSize(true);
+        new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
+        recyclerView.setAdapter(noteListAdapter);
+        bundle = new Bundle();
+        bundle1 = this.getArguments();
+        tripDataBase = TripDataBase.getInstance(getContext());
+        //Log.i("TAG", "initNotes : " + bundle1);
+
+        if (bundle1 != null) {
+            list = bundle1.getStringArrayList(NOTES_KEY);
+            Log.i("TAG", "initNotes : " + list);
+        }
+    }
+
     ItemTouchHelper.SimpleCallback itemTouchHelper = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -127,4 +134,26 @@ public class NoteFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putStringArrayList(NOTES_KEY, list);
     }
+
+    public void getNotes() {
+        tripDataBase.tripDao().getListNotes().subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<String>>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@io.reactivex.annotations.NonNull List<String> strings) {
+                        noteListAdapter.setDataList((ArrayList<String>) strings);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+
+                    }
+                });
+    }
+
 }
