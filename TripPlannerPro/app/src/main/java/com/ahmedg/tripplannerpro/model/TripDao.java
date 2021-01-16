@@ -1,6 +1,7 @@
 package com.ahmedg.tripplannerpro.model;
 
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -18,18 +19,24 @@ public interface TripDao {
     @Insert
     Completable insertTrip(TripModel tripModel);
 
-
     @Query("select * from trip_table")
-    Single<List<TripModel>> getTrips();
+    Single<List<TripModel>> getAllTrips();
+
+    @Query("SELECT * FROM trip_table WHERE id =:id")
+    Single<TripModel> getTripById(int id);
 
     @Delete
     Completable deleteTrip(TripModel tripModel);
 
     @Query("UPDATE trip_table set tripName= :tripName ,source =:source,destination=:destination ,status=:status,date=:date," +
-            "time=:time,direction=:direction,repetition=:repetition,notes=:notes WHERE id=:id")
+            "time=:time,direction=:direction,repetition=:repetition WHERE id=:id")
     Completable update(int id, String tripName, String source, String destination, boolean status,
-                       String date, String time, String direction, String repetition, ArrayList<String> notes);
+                       String date, String time, String direction, String repetition);
 
-    @Query("select notes from trip_table WHERE id")
-    Single<List<String>> getListNotes();
+    @Query("select notes from trip_table WHERE id=:id")
+    Single<List<String>> getListNotes(int id);
+
+    @Query("UPDATE trip_table SET notes =:notes WHERE id=:id")
+    Completable updateNotes(int id, ArrayList<String> notes);
+
 }

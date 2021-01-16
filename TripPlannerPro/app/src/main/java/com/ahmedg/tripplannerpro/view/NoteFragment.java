@@ -136,8 +136,9 @@ public class NoteFragment extends Fragment {
         outState.putStringArrayList(NOTES_KEY, list);
     }
 
-    public void getNotes() {
-        tripDataBase.tripDao().getListNotes().subscribeOn(Schedulers.computation())
+    public void getNotes(int ID) {
+
+        tripDataBase.tripDao().getListNotes(ID).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<String>>() {
                     @Override

@@ -27,12 +27,13 @@
             app:layout_constraintTop_toTopOf="@+id/guideline">
 
             <EditText
+                android:id="@+id/email_et"
                 android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/editTextTheme"
                 android:drawableStart="@drawable/person"
-                android:hint="Enter Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 />
         </com.google.android.material.textfield.TextInputLayout>
@@ -49,11 +50,12 @@
             app:layout_constraintTop_toBottomOf="@+id/emailSignInTextInputLayout">
 
             <EditText
+                android:id="@+id/password_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/editTextTheme"
                 android:drawableStart="@drawable/password"
-                android:hint="Enter Your Password"
+                android:hint="@string/password"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -85,11 +87,12 @@
             style="@style/TextTheme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="44dp"
+            android:layout_marginTop="16dp"
             android:text="Forget Password"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/signup_button" />
+            android:textColor="@color/accent_color"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/passwordSignInTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@+id/passwordSignInTextInputLayout" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -99,18 +102,27 @@
             app:layout_constraintGuide_percent="0.3" />
 
         <TextView
+            android:id="@+id/resend_verification_email_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:layout_marginBottom="64dp"
             android:text="Resend Verification Email"
             android:textColor="@color/accent_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/forget_password_tv"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@id/login_fb_btn" />
 
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_fb_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="@+id/signup_button"
+            app:layout_constraintStart_toStartOf="@+id/signup_button"
+            app:layout_constraintTop_toBottomOf="@+id/signup_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

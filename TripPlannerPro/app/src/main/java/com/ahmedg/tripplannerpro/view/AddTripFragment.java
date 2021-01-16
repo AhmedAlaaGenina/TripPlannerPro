@@ -3,10 +3,12 @@ package com.ahmedg.tripplannerpro.view;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -34,6 +36,16 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,13 +75,19 @@ public class AddTripFragment extends Fragment {
     String tripName, repetitionWord, directionWord, startPoint, endPoint, date, time;
     int myHour, myMinute;
     int myYear, myMonth, myDay;
-    LatLng latLngStart, latLngEnd;
+    Point latLngStart;
+    Point latLngEnd;
     String[] repetition = {"daily", "weekly", "monthly", "Other"};
     String[] direction = {"One Direction", "Round Trip"};
     TripDataBase tripDataBase;
     ArrayList<String> notesList;
     Bundle bundle;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,8 +98,8 @@ public class AddTripFragment extends Fragment {
         btnAddNotes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundleNoteBack=new Bundle();
-                bundleNoteBack.putStringArrayList(NOTE_BACK,notesList);
+                Bundle bundleNoteBack = new Bundle();
+                bundleNoteBack.putStringArrayList(NOTE_BACK, notesList);
                 NoteFragment noteFragment = new NoteFragment();
                 noteFragment.setArguments(bundleNoteBack);
                 Log.i("TAG", "initAddTrip: " + bundleNoteBack);
@@ -101,13 +119,13 @@ public class AddTripFragment extends Fragment {
         edtTxtStartPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setPlaceApi(v, PLACE_API_START);
+                setPlaceApi(PLACE_API_START);
             }
         });
         edtTxtEndPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setPlaceApi(v, PLACE_API_END);
+                setPlaceApi(PLACE_API_END);
             }
         });
 
@@ -158,27 +176,23 @@ public class AddTripFragment extends Fragment {
         return view;
     }
 
-    private void insertNewTrip(String tripName, String startPoint, String endPoint, boolean status, String date, String time, String directionWord, String repetitionWord, ArrayList<String> notesList) {
+    private void insertNewTrip(String tripName, String startPoint, String endPoint, boolean status,
+                               String date, String time, String directionWord, String repetitionWord,
+                               ArrayList<String> notesList) {
         tripDataBase.tripDao().insertTrip(new TripModel(tripName, startPoint, endPoint, status
                 , date, time, directionWord, repetitionWord, notesList))
                 .subscribeOn(Schedulers.computation())
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
                     }
 
                     @Override
                     public void onComplete() {
-                        Toast.makeText(view.getContext(), "Trip Add", Toast.LENGTH_SHORT).show();
-                        Log.i("TAG", "onComplete: Trip Add");
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        Toast.makeText(view.getContext(), "Trip Not Add", Toast.LENGTH_SHORT).show();
-                        Log.i("TAG", "onError: Not Add");
-
                     }
                 });
     }
@@ -212,11 +226,14 @@ public class AddTripFragment extends Fragment {
         timePickerDialog.show();
     }
 
-    private void setPlaceApi(View v, int placeApiRequest) {
-        List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS,
-                Place.Field.LAT_LNG, Place.Field.NAME);
-        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList)
-                .build(v.getContext());
+    private void setPlaceApi(int placeApiRequest) {
+        Intent intent = new PlaceAutocomplete.IntentBuilder()
+                .accessToken(getString(R.string.mapbox_access_token))
+                .placeOptions(PlaceOptions.builder()
+                        .backgroundColor(Color.parseColor("#EEEEEE"))
+                        .limit(10)
+                        .build(PlaceOptions.MODE_CARDS))
+                .build(getActivity());
         startActivityForResult(intent, placeApiRequest);
     }
 
@@ -271,40 +288,36 @@ public class AddTripFragment extends Fragment {
         myYear = calendar.get(calendar.YEAR);
         myMonth = calendar.get(calendar.MONTH);
         myDay = calendar.get(calendar.DAY_OF_MONTH);
-        notesList=new ArrayList<>();
+        notesList = new ArrayList<>();
         bundle = this.getArguments();
+        PlaceAutocompleteFragment autocompleteFragment;
         if (bundle != null) {
             notesList = bundle.getStringArrayList(NoteFragment.NOTES_KEY);
         }
-        //Place Api
-        Places.initialize(getContext(), "AIzaSyAJkMEOXZvxmudhM4_qCoXQBZ_RJgjvJBU");
-        //to Show Place Api First
-        //edtTxtStartPoint.setFocusable(false);
-        //edtTxtEndPoint.setFocusable(false);
+        edtTxtStartPoint.setFocusable(false);
+        edtTxtEndPoint.setFocusable(false);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == AddTripFragment.PLACE_API_START && resultCode == RESULT_OK) {
-            Place place = Autocomplete.getPlaceFromIntent(data);
-            edtTxtStartPoint.setText(place.getAddress());
-            latLngStart = place.getLatLng();
-            Log.i("TAG", "onActivityResult: Done 1");
+            CarmenFeature selectedCarmenFeature = PlaceAutocomplete.getPlace(data);
+            edtTxtStartPoint.setText(selectedCarmenFeature.text());
+            latLngStart = (Point) selectedCarmenFeature.geometry();
+            Toast.makeText(getContext(), "Start Point : " + latLngStart.longitude() + " " + latLngStart.latitude(), Toast.LENGTH_SHORT).show();
         }
         if (requestCode == AddTripFragment.PLACE_API_END && resultCode == RESULT_OK) {
-            Place place = Autocomplete.getPlaceFromIntent(data);
-            edtTxtEndPoint.setText(place.getAddress());
-            latLngEnd = place.getLatLng();
-            Log.i("TAG", "onActivityResult: Done 2");
+            CarmenFeature selectedCarmenFeature = PlaceAutocomplete.getPlace(data);
+            edtTxtEndPoint.setText(selectedCarmenFeature.text());
+            latLngEnd = (Point) selectedCarmenFeature.geometry();
+            Toast.makeText(getContext(), "Start Point : " + latLngEnd.longitude() + " " + latLngEnd.latitude(), Toast.LENGTH_SHORT).show();
 
         }
         if (requestCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
             Toast.makeText(getContext(), status.getStatusCode(), Toast.LENGTH_SHORT).show();
             Log.i("TAG", "onActivityResult: Done 3");
-
         }
     }
-
 }

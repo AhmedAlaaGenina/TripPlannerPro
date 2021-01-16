@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.ahmedg.tripplannerpro.model.TripDataBase;
 import com.ahmedg.tripplannerpro.model.TripModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -97,11 +99,14 @@ public class MainActivity extends AppCompatActivity {
             loadFragment(new HomeFragment());
 
         } else if (id == R.id.account) {
-            loadFragment(new ProfileFragment());
+            //loadFragment(new ProfileFragment());
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+
 
         } else if (id == R.id.sync) {
             //sync Data With Firebase......
-            tripDataBase.tripDao().getTrips().subscribeOn(Schedulers.computation())
+            tripDataBase.tripDao().getAllTrips().subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SingleObserver<List<TripModel>>() {
                         @Override

@@ -39,6 +39,7 @@ dependencies {
     implementation 'androidx.wear:wear:1.1.0'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
     implementation 'com.google.firebase:firebase-database:19.6.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -65,4 +66,10 @@ dependencies {
 
     //Gson
     implementation 'com.google.code.gson:gson:2.8.6'
+    //FB
+    implementation 'com.facebook.android:facebook-login:5.15.3'
+    //map boxApi
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-places-v9:0.12.0'
+
+
 }

@@ -113,7 +113,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void getTrips() {
-        tripDataBase.tripDao().getTrips().subscribeOn(Schedulers.computation())
+        tripDataBase.tripDao().getAllTrips().subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<TripModel>>() {
                     @Override

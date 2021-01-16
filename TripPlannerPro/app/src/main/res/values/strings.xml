@@ -25,4 +25,27 @@
     <string name="repetition">Repetition</string>
     <string name="save">Save</string>
     <string name="add_this_trip">Add This Trip</string>
+    <string name="passwordsNotMatch">Password not match!</string>
+    <string name="warnOfDomainInvaild">Domain Invaild!</string>
+    <string name="warnOfEmptyEmail">Please enter email!</string>
+    <string name="warnOfEmptyPassword">Please enter password!</string>
+    <string name="warnOfEmptyConfirmPassword">Please enter confirm password!</string>
+    <string name="weakPassword">"Weak Password!"</string>
+    <string name="invaildEmail">"Invaild Email"</string>
+    <string name="userExist">"User Exist"</string>
+    <string name="warnEmailNotExist">"Email not exist!"</string>
+    <string name="wrongPassword">"Wrong Password!"</string>
+    <string name="reset_password">"Reset Password"</string>
+    <string name="resend_verification_email">"Resend Verification Email"</string>
+    <string name="facebook_app_id">458223138922401</string>
+    <string name="fb_login_protocol_scheme">fb458223138922401</string>
+    <string name="email">Enter Your Email</string>
+    <string name="password">Enter Your Password</string>
+    <string name="cancel">cancel</string>
+    <string name="confirm">confirm</string>
+    <string name="log_out">Log out</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoiYWhtZWRhbGFhNDA4MCIsImEiOiJja2p6cm14NGgwYWdyMnZtbnEyYTk3aGhtIn0.cwRiYcb51gET_KdP-PTc-w</string>
+
+
+
 </resources>
