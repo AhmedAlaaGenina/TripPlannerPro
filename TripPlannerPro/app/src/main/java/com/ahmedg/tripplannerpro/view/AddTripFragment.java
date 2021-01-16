@@ -34,11 +34,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,7 +68,7 @@ public class AddTripFragment extends Fragment {
     String[] direction = {"One Direction", "Round Trip"};
     TripDataBase tripDataBase;
     ArrayList<String> notesList;
-    Bundle bundle, bundle1;
+    Bundle bundle;
 
 
     @Override
@@ -85,12 +80,14 @@ public class AddTripFragment extends Fragment {
         btnAddNotes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundleNoteBack=new Bundle();
+                bundleNoteBack.putStringArrayList(NOTE_BACK,notesList);
                 NoteFragment noteFragment = new NoteFragment();
-                noteFragment.setArguments(bundle1);
-                Log.i("TAG", "initAddTrip: " + bundle1);
+                noteFragment.setArguments(bundleNoteBack);
+                Log.i("TAG", "initAddTrip: " + bundleNoteBack);
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.container, new NoteFragment(), NOTE_FRAGMENT)
+                        .replace(R.id.container, noteFragment, NOTE_FRAGMENT)
                         .addToBackStack(null)
                         .commit();
             }
@@ -274,11 +271,10 @@ public class AddTripFragment extends Fragment {
         myYear = calendar.get(calendar.YEAR);
         myMonth = calendar.get(calendar.MONTH);
         myDay = calendar.get(calendar.DAY_OF_MONTH);
+        notesList=new ArrayList<>();
         bundle = this.getArguments();
-        bundle1 = new Bundle();
         if (bundle != null) {
             notesList = bundle.getStringArrayList(NoteFragment.NOTES_KEY);
-            bundle1.putString(NoteFragment.NOTES_KEY, String.valueOf(notesList));
         }
         //Place Api
         Places.initialize(getContext(), "AIzaSyAJkMEOXZvxmudhM4_qCoXQBZ_RJgjvJBU");

@@ -7,7 +7,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-@Database(entities = TripModel.class, version = 1)
+@Database(entities = TripModel.class, version = 1,exportSchema = false)
 @TypeConverters(Converters.class)
 public abstract class TripDataBase extends RoomDatabase {
 

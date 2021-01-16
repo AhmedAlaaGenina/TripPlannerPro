@@ -42,7 +42,7 @@ public class NoteFragment extends Fragment {
     EditText edTextNote;
     ArrayList<String> list;
     TextView tvEmpty;
-    Bundle bundle, bundle1;
+    Bundle bundle, bundleNoteBack;
     TripDataBase tripDataBase;
 
     @Override
@@ -55,13 +55,19 @@ public class NoteFragment extends Fragment {
         } else {
             list = savedInstanceState.getStringArrayList(NOTES_KEY);
         }
-
         noteListAdapter.setDataList(list);
-        if (list.isEmpty()) {
+        if (bundleNoteBack != null) {
+
+            list = bundleNoteBack.getStringArrayList(AddTripFragment.NOTE_BACK);
+            noteListAdapter.setDataList(list);
+
+        }
+        if (list == null || list.isEmpty()) {
+            if (list == null) {
+                list = new ArrayList<>();
+            }
             tvEmpty.setVisibility(View.VISIBLE);
         }
-
-
         btnAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,14 +111,9 @@ public class NoteFragment extends Fragment {
         new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(noteListAdapter);
         bundle = new Bundle();
-        bundle1 = this.getArguments();
+        bundleNoteBack = this.getArguments();
         tripDataBase = TripDataBase.getInstance(getContext());
-        //Log.i("TAG", "initNotes : " + bundle1);
-
-        if (bundle1 != null) {
-            list = bundle1.getStringArrayList(NOTES_KEY);
-            Log.i("TAG", "initNotes : " + list);
-        }
+        list = new ArrayList<>();
     }
 
     ItemTouchHelper.SimpleCallback itemTouchHelper = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
