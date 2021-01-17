@@ -5,7 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
@@ -23,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.SingleObserver;
@@ -40,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference myRef, newRef;
     TripDataBase tripDataBase;
+    AlarmManager alarmManager;
+    AlertReceiver alertReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         myRef = firebaseDatabase.getReference().child("trips");
         newRef = myRef.push();
         tripDataBase = TripDataBase.getInstance(getApplicationContext());
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alertReceiver = new AlertReceiver();
+
         if (savedInstanceState != null) {
             return;
         } else {
@@ -68,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         btnAddNewTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.container, new AddTripFragment(), ADD_TRIP_FRAGMENT)
@@ -101,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.account) {
             //loadFragment(new ProfileFragment());
             FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
 
 
         } else if (id == R.id.sync) {
@@ -146,5 +157,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState, outPersistentState);
         getSupportFragmentManager().putFragment(outState, TAG, homeFragment);
     }
+
+
 
 }

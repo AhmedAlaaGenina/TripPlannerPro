@@ -1,8 +1,12 @@
 package com.ahmedg.tripplannerpro.view;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -82,6 +86,10 @@ public class AddTripFragment extends Fragment {
     TripDataBase tripDataBase;
     ArrayList<String> notesList;
     Bundle bundle;
+    AlarmManager alarmManager;
+    AlertReceiver alertReceiver;
+    public static double lat;
+    public static double logt;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,7 +118,6 @@ public class AddTripFragment extends Fragment {
                         .commit();
             }
         });
-
         //Repetition and direction
         getDirection();
         getRepetition();
@@ -162,6 +169,7 @@ public class AddTripFragment extends Fragment {
                     time = txtViewTime.getText().toString();
                     insertNewTrip(tripName, startPoint, endPoint, true
                             , date, time, directionWord, repetitionWord, notesList);
+                    setAlarm(myHour, myMinute, myDay, myMonth, myYear);
                     edtTxtNameTrip.setText("");
                     edtTxtStartPoint.setText("");
                     edtTxtEndPoint.setText("");
@@ -219,6 +227,7 @@ public class AddTripFragment extends Fragment {
                 myMinute = minute;
                 calendar.set(0, 0, 0, myHour, myMinute);
                 txtViewTime.setText(DateFormat.format("hh:mm aa", calendar));
+                Log.i("TAG", "onTimeSet: " + myYear + " " + myMonth + " " + myDay + " " + myHour + " " + myMinute);
             }
         }, 12, 0, false
         );
@@ -291,6 +300,10 @@ public class AddTripFragment extends Fragment {
         notesList = new ArrayList<>();
         bundle = this.getArguments();
         PlaceAutocompleteFragment autocompleteFragment;
+        calendar.set(myYear, myMonth, myDay, myHour, myMinute);
+        alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        alertReceiver = new AlertReceiver();
+
         if (bundle != null) {
             notesList = bundle.getStringArrayList(NoteFragment.NOTES_KEY);
         }
@@ -301,23 +314,46 @@ public class AddTripFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AddTripFragment.PLACE_API_START && resultCode == RESULT_OK) {
+        if (requestCode == AddTripFragment.PLACE_API_START && resultCode == getActivity().RESULT_OK) {
             CarmenFeature selectedCarmenFeature = PlaceAutocomplete.getPlace(data);
             edtTxtStartPoint.setText(selectedCarmenFeature.text());
             latLngStart = (Point) selectedCarmenFeature.geometry();
             Toast.makeText(getContext(), "Start Point : " + latLngStart.longitude() + " " + latLngStart.latitude(), Toast.LENGTH_SHORT).show();
         }
-        if (requestCode == AddTripFragment.PLACE_API_END && resultCode == RESULT_OK) {
+        if (requestCode == AddTripFragment.PLACE_API_END && resultCode == getActivity().RESULT_OK) {
             CarmenFeature selectedCarmenFeature = PlaceAutocomplete.getPlace(data);
             edtTxtEndPoint.setText(selectedCarmenFeature.text());
             latLngEnd = (Point) selectedCarmenFeature.geometry();
             Toast.makeText(getContext(), "Start Point : " + latLngEnd.longitude() + " " + latLngEnd.latitude(), Toast.LENGTH_SHORT).show();
-
+            lat = latLngEnd.longitude();
+            logt = latLngEnd.latitude();
         }
         if (requestCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
             Toast.makeText(getContext(), status.getStatusCode(), Toast.LENGTH_SHORT).show();
             Log.i("TAG", "onActivityResult: Done 3");
         }
+    }
+
+    public void setAlarm(int hour, int min, int day, int month, int year) {
+        Intent intentA = new Intent(getContext(), AlertReceiver.class);
+//        intentA.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+//        intentA.setAction(Intent.ACTION_MAIN);
+//        intentA.addCategory(Intent.CATEGORY_LAUNCHER);
+//        intentA.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntentA = PendingIntent.getBroadcast(getContext(), 0, intentA, 0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, min);
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DATE, day);
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.SECOND, 0);
+        long alarm_time = calendar.getTimeInMillis();
+        System.out.println(alarm_time);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarm_time, pendingIntentA);
+        Toast.makeText(getContext(), "Alarm set", Toast.LENGTH_LONG).show();
+        Log.i("TAG", "setAlarm ");
+        getActivity().registerReceiver(alertReceiver, new IntentFilter());
     }
 }
