@@ -3,9 +3,8 @@ package com.ahmedg.tripplannerpro.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import java.util.ArrayList;
-
-@Entity(tableName = "trip_table")
-public class TripModel {
+@Entity(tableName = "trip_table_history")
+public class TripModelHistory {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String tripName;
@@ -18,8 +17,8 @@ public class TripModel {
     private String repetition;
     private ArrayList<String> notes;
 
-    public TripModel( String tripName, String source, String destination, boolean status,
-                     String date, String time, String direction, String repetition, ArrayList<String> notes) {
+    public TripModelHistory( String tripName, String source, String destination, boolean status,
+                      String date, String time, String direction, String repetition, ArrayList<String> notes) {
         this.tripName = tripName;
         this.source = source;
         this.destination = destination;

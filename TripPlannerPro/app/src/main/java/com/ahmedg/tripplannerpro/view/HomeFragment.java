@@ -33,7 +33,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SetOnclickListener{
     public static final String ADD_TRIP_FRAGMENT = "AddTripFragment";
     Button btnNotes;
     private int[] images = {R.drawable.status_cancel, R.drawable.status_done};
@@ -86,6 +86,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(mCtx));
         homeTripAdapter = new HomeTripAdapter();
+        homeTripAdapter.setOnItemClickListener(this);
         recyclerView.setAdapter(homeTripAdapter);
         firebaseDatabase = FirebaseDatabase.getInstance();
         myRef = firebaseDatabase.getReference().child("trips");
@@ -132,4 +133,30 @@ public class HomeFragment extends Fragment {
                 });
     }
 
+
+    @Override
+    public void onItemClickListener(View v,int index) {
+//        tripDataBase.tripDao().getTripById(index).
+        Toast.makeText(v.getContext(), "Item Clicked", Toast.LENGTH_SHORT).show();
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, new AddTripFragment(), ADD_TRIP_FRAGMENT)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onNoteClickListener(View v,int index) {
+        Toast.makeText(v.getContext(), "Notes Clicked", Toast.LENGTH_SHORT).show();
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, new NoteFragment(), ADD_TRIP_FRAGMENT)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onStartClickListener(View v,int index) {
+        Toast.makeText(v.getContext(), "Start Clicked", Toast.LENGTH_SHORT).show();
+    }
 }

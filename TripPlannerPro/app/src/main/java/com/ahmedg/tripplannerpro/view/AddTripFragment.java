@@ -55,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 
 import io.reactivex.CompletableObserver;
@@ -64,7 +65,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
 
-public class AddTripFragment extends Fragment {
+public class AddTripFragment extends Fragment  {
     private static final int PLACE_API_START = 100;
     private static final int PLACE_API_END = 101;
     public static final String NOTE_FRAGMENT = "NOTE_FRAGMENT";
@@ -337,11 +338,13 @@ public class AddTripFragment extends Fragment {
 
     public void setAlarm(int hour, int min, int day, int month, int year) {
         Intent intentA = new Intent(getContext(), AlertReceiver.class);
+        Random r = new Random();
+        int i1 = r.nextInt(99);
 //        intentA.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
 //        intentA.setAction(Intent.ACTION_MAIN);
 //        intentA.addCategory(Intent.CATEGORY_LAUNCHER);
 //        intentA.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntentA = PendingIntent.getBroadcast(getContext(), 0, intentA, 0);
+        PendingIntent pendingIntentA = PendingIntent.getBroadcast(getContext(), i1, intentA, 0);
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, min);
@@ -356,4 +359,5 @@ public class AddTripFragment extends Fragment {
         Log.i("TAG", "setAlarm ");
         getActivity().registerReceiver(alertReceiver, new IntentFilter());
     }
+
 }

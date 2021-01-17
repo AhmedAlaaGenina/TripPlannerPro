@@ -20,6 +20,7 @@ import java.util.List;
 
 public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTripViewHolder> {
     private ArrayList<TripModel> tripModelArrayList = new ArrayList<>();
+    SetOnclickListener setOnclickListener;
 
     @NonNull
     @Override
@@ -47,6 +48,10 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
 
     }
 
+    public void setOnItemClickListener(SetOnclickListener setOnclickListener) {
+        this.setOnclickListener = setOnclickListener;
+    }
+
     public ArrayList<TripModel> getModelArrayList() {
         return tripModelArrayList;
     }
@@ -61,9 +66,10 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
         notifyDataSetChanged();
     }
 
-    class HomeTripViewHolder extends RecyclerView.ViewHolder {
+    class HomeTripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tripName, source, destination, date, time;
         ImageView status;
+        Button btnNotes, btnStart;
 
         public HomeTripViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -73,6 +79,34 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
             date = itemView.findViewById(R.id.dateTv);
             time = itemView.findViewById(R.id.timeTv);
             status = itemView.findViewById(R.id.statusIv);
+            btnNotes = itemView.findViewById(R.id.notesBtn);
+            btnStart = itemView.findViewById(R.id.btnStart);
+            itemView.setOnClickListener(this);
+            itemView.setClickable(true);
+            btnNotes.setOnClickListener(this);
+            btnStart.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (setOnclickListener != null) {
+                setOnclickListener.onItemClickListener(itemView, getAdapterPosition());
+                if (v == btnNotes) {
+                    setOnclickListener.onNoteClickListener(itemView, getAdapterPosition());
+                }
+                if (v == btnStart) {
+                    setOnclickListener.onStartClickListener(itemView, getAdapterPosition());
+                }
+            }
         }
     }
+}
+
+interface SetOnclickListener {
+    void onItemClickListener(View v, int index);
+
+    void onNoteClickListener(View v, int index);
+
+    void onStartClickListener(View v, int index);
 }
