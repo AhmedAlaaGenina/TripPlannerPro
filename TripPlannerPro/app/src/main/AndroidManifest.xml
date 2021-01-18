@@ -26,6 +26,7 @@
             android:name=".view.AlertReceiver"
             android:enabled="true"
             android:exported="true" />
+
         <activity android:name=".view.SignUpActivity"></activity>
         <activity android:name=".view.LoginActivity" />
         <activity android:name=".view.MainActivity">
@@ -67,7 +68,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.DemoActivity" />
+        <activity
+            android:name=".view.DemoActivity"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.Alert" />
     </application>
     <queries>
         <package android:name="com.facebook.katana" />

@@ -34,27 +34,16 @@ import com.ahmedg.tripplannerpro.R;
 import com.ahmedg.tripplannerpro.model.TripDataBase;
 import com.ahmedg.tripplannerpro.model.TripModel;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
-import com.mapbox.api.geocoding.v5.MapboxGeocoding;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Random;
 
 
@@ -63,9 +52,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static android.app.Activity.RESULT_OK;
-
-public class AddTripFragment extends Fragment  {
+public class AddTripFragment extends Fragment {
     private static final int PLACE_API_START = 100;
     private static final int PLACE_API_END = 101;
     public static final String NOTE_FRAGMENT = "NOTE_FRAGMENT";
@@ -168,7 +155,7 @@ public class AddTripFragment extends Fragment  {
                     endPoint = edtTxtEndPoint.getText().toString();
                     date = txtViewDate.getText().toString();
                     time = txtViewTime.getText().toString();
-                    insertNewTrip(tripName, startPoint, endPoint, true
+                    insertNewTrip(tripName, startPoint, endPoint
                             , date, time, directionWord, repetitionWord, notesList);
                     setAlarm(myHour, myMinute, myDay, myMonth, myYear);
                     edtTxtNameTrip.setText("");
@@ -185,10 +172,10 @@ public class AddTripFragment extends Fragment  {
         return view;
     }
 
-    private void insertNewTrip(String tripName, String startPoint, String endPoint, boolean status,
+    private void insertNewTrip(String tripName, String startPoint, String endPoint,
                                String date, String time, String directionWord, String repetitionWord,
                                ArrayList<String> notesList) {
-        tripDataBase.tripDao().insertTrip(new TripModel(tripName, startPoint, endPoint, status
+        tripDataBase.tripDao().insertTrip(new TripModel(tripName, startPoint, endPoint
                 , date, time, directionWord, repetitionWord, notesList))
                 .subscribeOn(Schedulers.computation())
                 .subscribe(new CompletableObserver() {

@@ -42,22 +42,24 @@
             android:text="Source"
             android:textColor="#E1131313"
             android:textSize="18sp"
-            app:layout_constraintEnd_toStartOf="@+id/arrowForwardIv"
+            app:layout_constraintEnd_toStartOf="@+id/arrowDirectionIv"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tridNameTv" />
 
         <ImageView
-            android:id="@+id/arrowForwardIv"
+            android:id="@+id/arrowDirectionIv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Arrow Forward"
+            android:visibility="invisible"
+            android:contentDescription="Arrow Direction"
             app:layout_constraintBottom_toBottomOf="@+id/sourceTripTv"
             app:layout_constraintEnd_toStartOf="@+id/destinationTripTv"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/sourceTripTv"
             app:layout_constraintTop_toTopOf="@+id/sourceTripTv"
-            app:srcCompat="@drawable/arrow_forward" />
+            />
+
 
         <TextView
             android:id="@+id/destinationTripTv"
@@ -66,11 +68,11 @@
             android:text="Destination"
             android:textColor="#E1131313"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/arrowForwardIv"
+            app:layout_constraintBottom_toBottomOf="@+id/arrowDirectionIv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/arrowForwardIv"
-            app:layout_constraintTop_toTopOf="@+id/arrowForwardIv" />
+            app:layout_constraintStart_toEndOf="@+id/arrowDirectionIv"
+            app:layout_constraintTop_toTopOf="@+id/arrowDirectionIv" />
 
         <TextView
             android:id="@+id/dateTv"
@@ -116,7 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:visibility="invisible"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/status_done" />
@@ -142,7 +144,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             app:layout_constraintStart_toEndOf="@+id/notesBtn"
-            app:layout_constraintTop_toBottomOf="@+id/arrowForwardIv"
+            app:layout_constraintTop_toBottomOf="@+id/arrowDirectionIv"
             app:srcCompat="@drawable/calendar" />
 
         <ImageView

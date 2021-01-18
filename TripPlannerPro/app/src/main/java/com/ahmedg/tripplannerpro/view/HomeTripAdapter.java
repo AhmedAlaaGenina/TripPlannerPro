@@ -21,6 +21,7 @@ import java.util.List;
 public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTripViewHolder> {
     private ArrayList<TripModel> tripModelArrayList = new ArrayList<>();
     SetOnclickListener setOnclickListener;
+    int pos;
 
     @NonNull
     @Override
@@ -31,19 +32,20 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
 
     @Override
     public void onBindViewHolder(@NonNull HomeTripViewHolder holder, int position) {
+        pos = position;
         holder.tripName.setText(tripModelArrayList.get(position).getTripName());
         holder.source.setText(tripModelArrayList.get(position).getSource());
         holder.destination.setText(tripModelArrayList.get(position).getDestination());
         holder.date.setText(tripModelArrayList.get(position).getDate());
         holder.time.setText(tripModelArrayList.get(position).getTime());
 
-        if (tripModelArrayList.get(position).isStatus()) {
-            holder.status.setVisibility(View.VISIBLE);
-            holder.status.setImageResource(R.drawable.status_done);
+        if (tripModelArrayList.get(position).getDirection().equals("One Direction")) {
+            holder.direction.setVisibility(View.VISIBLE);
+            holder.direction.setImageResource(R.drawable.arrow_forward);
 
         } else {
-            holder.status.setVisibility(View.VISIBLE);
-            holder.status.setImageResource(R.drawable.status_cancel);
+            holder.direction.setVisibility(View.VISIBLE);
+            holder.direction.setImageResource(R.drawable.arrow_round);
         }
 
     }
@@ -54,6 +56,13 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
 
     public ArrayList<TripModel> getModelArrayList() {
         return tripModelArrayList;
+    }
+    public TripModel getItem(int index) {
+        return tripModelArrayList.get(index);
+    }
+
+    public int getId() {
+        return pos;
     }
 
     @Override
@@ -68,7 +77,8 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
 
     class HomeTripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tripName, source, destination, date, time;
-        ImageView status;
+        ImageView direction;
+
         Button btnNotes, btnStart;
 
         public HomeTripViewHolder(@NonNull View itemView) {
@@ -78,8 +88,8 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
             destination = itemView.findViewById(R.id.destinationTripTv);
             date = itemView.findViewById(R.id.dateTv);
             time = itemView.findViewById(R.id.timeTv);
-            status = itemView.findViewById(R.id.statusIv);
             btnNotes = itemView.findViewById(R.id.notesBtn);
+            direction = itemView.findViewById(R.id.arrowDirectionIv);
             btnStart = itemView.findViewById(R.id.btnStart);
             itemView.setOnClickListener(this);
             itemView.setClickable(true);
@@ -91,12 +101,14 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
         @Override
         public void onClick(View v) {
             if (setOnclickListener != null) {
-                setOnclickListener.onItemClickListener(itemView, getAdapterPosition());
+                if (v == itemView) {
+                    setOnclickListener.onItemClickListener(getAdapterPosition());
+                }
                 if (v == btnNotes) {
-                    setOnclickListener.onNoteClickListener(itemView, getAdapterPosition());
+                    setOnclickListener.onNoteClickListener(getAdapterPosition());
                 }
                 if (v == btnStart) {
-                    setOnclickListener.onStartClickListener(itemView, getAdapterPosition());
+                    setOnclickListener.onStartClickListener(getAdapterPosition());
                 }
             }
         }
@@ -104,9 +116,9 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
 }
 
 interface SetOnclickListener {
-    void onItemClickListener(View v, int index);
+    void onItemClickListener(int index);
 
-    void onNoteClickListener(View v, int index);
+    void onNoteClickListener(int index);
 
-    void onStartClickListener(View v, int index);
+    void onStartClickListener(int index);
 }

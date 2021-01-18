@@ -45,7 +45,8 @@
     <string name="confirm">confirm</string>
     <string name="log_out">Log out</string>
     <string name="mapbox_access_token">pk.eyJ1IjoiYWhtZWRhbGFhNDA4MCIsImEiOiJja2p6cm14NGgwYWdyMnZtbnEyYTk3aGhtIn0.cwRiYcb51gET_KdP-PTc-w</string>
-
+    <string name="update_this_trip">Update This Trip</string>
+    <string name="update_notes">Update Notes</string>
 
 
 </resources>

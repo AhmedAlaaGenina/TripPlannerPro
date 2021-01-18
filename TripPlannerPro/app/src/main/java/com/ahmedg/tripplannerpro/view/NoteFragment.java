@@ -4,7 +4,6 @@ package com.ahmedg.tripplannerpro.view;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,16 +21,8 @@ import android.widget.Toast;
 
 import com.ahmedg.tripplannerpro.R;
 import com.ahmedg.tripplannerpro.model.TripDataBase;
-import com.ahmedg.tripplannerpro.model.TripModel;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import io.reactivex.Scheduler;
-import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class NoteFragment extends Fragment {
     public static final String NOTES_KEY = "NOTES_KEY";
@@ -135,27 +126,4 @@ public class NoteFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putStringArrayList(NOTES_KEY, list);
     }
-
-    public void getNotes(int ID) {
-
-        tripDataBase.tripDao().getListNotes(ID).subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<List<String>>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(@io.reactivex.annotations.NonNull List<String> strings) {
-                        noteListAdapter.setDataList((ArrayList<String>) strings);
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-
-                    }
-                });
-    }
-
 }

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.ahmedg.tripplannerpro.R;
 import com.ahmedg.tripplannerpro.model.TripDataBase;
 import com.ahmedg.tripplannerpro.model.TripModel;
+import com.ahmedg.tripplannerpro.model.TripModelHistory;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -33,8 +35,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class HomeFragment extends Fragment implements SetOnclickListener{
+public class HomeFragment extends Fragment implements SetOnclickListener {
     public static final String ADD_TRIP_FRAGMENT = "AddTripFragment";
+    public static final String NOTE_ROOM = "noteRoom";
+    public static final String GET_TRIP = "getTrip";
+    public static final String GET_ID ="GetID" ;
     Button btnNotes;
     private int[] images = {R.drawable.status_cancel, R.drawable.status_done};
     private RecyclerView recyclerView;
@@ -44,6 +49,7 @@ public class HomeFragment extends Fragment implements SetOnclickListener{
     DatabaseReference myRef, newRef;
     FirebaseDatabase firebaseDatabase;
     View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,6 +71,7 @@ public class HomeFragment extends Fragment implements SetOnclickListener{
             new AlertDialog.Builder(getActivity()).setMessage("Do You Want to Delete this Trip ?!")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+                            setItemInHistoryDB(viewHolder);
                             deleteTripItem(viewHolder);
                             homeTripAdapter.getModelArrayList().remove(viewHolder.getAdapterPosition());
                             homeTripAdapter.notifyDataSetChanged();
@@ -73,7 +80,6 @@ public class HomeFragment extends Fragment implements SetOnclickListener{
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             getTrips();
-
                         }
                     }).show();
         }
@@ -95,7 +101,8 @@ public class HomeFragment extends Fragment implements SetOnclickListener{
     }
 
     public void deleteTripItem(RecyclerView.ViewHolder viewHolder) {
-        tripDataBase.tripDao().deleteTrip(homeTripAdapter.getModelArrayList().get(viewHolder.getAdapterPosition())).subscribeOn(Schedulers.computation())
+        tripDataBase.tripDao().deleteTrip(homeTripAdapter.getModelArrayList().get(viewHolder.getAdapterPosition()))
+                .subscribeOn(Schedulers.computation())
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
@@ -133,30 +140,155 @@ public class HomeFragment extends Fragment implements SetOnclickListener{
                 });
     }
 
+    public void getTripsById(int ID) {
+        tripDataBase.tripDao().getTripById(homeTripAdapter.getModelArrayList().get(ID).getId())
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<TripModel>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull TripModel tripModel) {
+                        Log.i("TAG", "onSuccess: " + tripModel.getNotes());
+                        Bundle bundleSendNoteRoom = new Bundle();
+                        bundleSendNoteRoom.putParcelable(GET_TRIP, tripModel);
+                        bundleSendNoteRoom.putInt(GET_ID,homeTripAdapter.getModelArrayList().get(ID).getId());
+                        UpdateFragment updateFragment = new UpdateFragment();
+                        updateFragment.setArguments(bundleSendNoteRoom);
+                        Log.i("TAG", "initAddTrip: " + bundleSendNoteRoom);
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.container, updateFragment, GET_TRIP)
+                                .addToBackStack(null)
+                                .commit();                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+                });
+    }
+
+    public void getNotes(int ID) {
+        tripDataBase.tripDao().getTripById(homeTripAdapter.getModelArrayList().get(ID).getId())
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<TripModel>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull TripModel tripModel) {
+                        Log.i("TAG", "onSuccess: " + tripModel.getNotes());
+                        Bundle bundleSendNoteRoom = new Bundle();
+                        bundleSendNoteRoom.putStringArrayList(NOTE_ROOM, tripModel.getNotes());
+                        bundleSendNoteRoom.putInt(GET_ID,homeTripAdapter.getModelArrayList().get(ID).getId());
+                        UpdateNotesFragment updateNotesFragment = new UpdateNotesFragment();
+                        updateNotesFragment.setArguments(bundleSendNoteRoom);
+                        Log.i("TAG", "initAddTrip: " + bundleSendNoteRoom);
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.container, updateNotesFragment, AddTripFragment.NOTE_FRAGMENT)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+                });
+    }
+
+    private void setItemInHistoryDB(RecyclerView.ViewHolder viewHolder) {
+        Log.v("HistoryDb ","delete");
+        TripModel tripModel = homeTripAdapter.getItem(viewHolder.getAdapterPosition());
+        Log.v("HistoryDb ",tripModel.getTripName());
+        tripDataBase.tripDaoHistory().insertTripHistory(new TripModelHistory(tripModel.getTripName(),
+                tripModel.getSource(), tripModel.getDestination(), false,
+                tripModel.getDate(), tripModel.getTime(), tripModel.getDirection(),
+                tripModel.getRepetition(), tripModel.getNotes())).subscribeOn(Schedulers.computation())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.v("HistoryDb ","onSubscribe");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.v("HistoryDb ","onComplete");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Log.v("HistoryDb ","error");
+                    }
+                });
+    }
+
+    private void setItemInHistoryDB(int index) {
+        Log.v("HistoryDb ","start");
+        TripModel tripModel = homeTripAdapter.getItem(index);
+        tripDataBase.tripDaoHistory().insertTripHistory(new TripModelHistory(tripModel.getTripName(),
+                tripModel.getSource(), tripModel.getDestination(), true,
+                tripModel.getDate(), tripModel.getTime(), tripModel.getDirection(),
+                tripModel.getRepetition(), tripModel.getNotes())).subscribeOn(Schedulers.computation())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        Log.v("HistoryDb ","onSubscribe1");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.v("HistoryDb ","onComplete1");
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Log.v("HistoryDb ","error1");
+                    }
+                });
+    }
+
+    public void deleteTripItem(int index) {
+        tripDataBase.tripDao().deleteTrip(homeTripAdapter.getModelArrayList().get(index)).subscribeOn(Schedulers.computation())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+                });
+    }
+
 
     @Override
-    public void onItemClickListener(View v,int index) {
-//        tripDataBase.tripDao().getTripById(index).
-        Toast.makeText(v.getContext(), "Item Clicked", Toast.LENGTH_SHORT).show();
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, new AddTripFragment(), ADD_TRIP_FRAGMENT)
-                .addToBackStack(null)
-                .commit();
+    public void onItemClickListener(int index) {
+        getTripsById(index);
     }
 
     @Override
-    public void onNoteClickListener(View v,int index) {
-        Toast.makeText(v.getContext(), "Notes Clicked", Toast.LENGTH_SHORT).show();
-        getActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, new NoteFragment(), ADD_TRIP_FRAGMENT)
-                .addToBackStack(null)
-                .commit();
+    public void onNoteClickListener(int index) {
+        getNotes(index);
     }
 
+
     @Override
-    public void onStartClickListener(View v,int index) {
-        Toast.makeText(v.getContext(), "Start Clicked", Toast.LENGTH_SHORT).show();
+    public void onStartClickListener(int index) {
+        Toast.makeText(getActivity(), "Start Clicked", Toast.LENGTH_SHORT).show();
+        setItemInHistoryDB(index);
+        deleteTripItem(index);
+        homeTripAdapter.getModelArrayList().remove(index);
+        homeTripAdapter.notifyDataSetChanged();
     }
 }
