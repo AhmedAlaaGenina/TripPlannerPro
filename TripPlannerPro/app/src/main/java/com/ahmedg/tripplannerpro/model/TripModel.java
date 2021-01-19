@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
 import java.util.ArrayList;
 
 @Entity(tableName = "trip_table")
@@ -15,22 +16,26 @@ public class TripModel implements Parcelable {
     private String tripName;
     private String source;
     private String destination;
-    private String date;
     private String time;
     private String direction;
     private String repetition;
     private ArrayList<String> notes;
+    private Double lat;
+    private Double longt;
+    private long alarm_time;
 
-    public TripModel( String tripName, String source, String destination,
-                     String date, String time, String direction, String repetition, ArrayList<String> notes) {
+    public TripModel(String tripName, String source, String destination, String time, String direction,
+                     String repetition, ArrayList<String> notes, Double lat, Double longt, long alarm_time) {
         this.tripName = tripName;
         this.source = source;
         this.destination = destination;
-        this.date = date;
         this.time = time;
         this.direction = direction;
         this.repetition = repetition;
         this.notes = notes;
+        this.lat = lat;
+        this.longt = longt;
+        this.alarm_time = alarm_time;
     }
 
     protected TripModel(Parcel in) {
@@ -38,11 +43,21 @@ public class TripModel implements Parcelable {
         tripName = in.readString();
         source = in.readString();
         destination = in.readString();
-        date = in.readString();
         time = in.readString();
         direction = in.readString();
         repetition = in.readString();
         notes = in.createStringArrayList();
+        if (in.readByte() == 0) {
+            lat = null;
+        } else {
+            lat = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            longt = null;
+        } else {
+            longt = in.readDouble();
+        }
+        alarm_time = in.readLong();
     }
 
     public static final Creator<TripModel> CREATOR = new Creator<TripModel>() {
@@ -89,14 +104,6 @@ public class TripModel implements Parcelable {
         this.destination = destination;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public String getTime() {
         return time;
     }
@@ -121,12 +128,36 @@ public class TripModel implements Parcelable {
         this.repetition = repetition;
     }
 
-    public  ArrayList<String> getNotes() {
+    public ArrayList<String> getNotes() {
         return notes;
     }
 
     public void setNotes(ArrayList<String> notes) {
         this.notes = notes;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLongt() {
+        return longt;
+    }
+
+    public void setLongt(Double longt) {
+        this.longt = longt;
+    }
+
+    public long getAlarm_time() {
+        return alarm_time;
+    }
+
+    public void setAlarm_time(long alarm_time) {
+        this.alarm_time = alarm_time;
     }
 
     @Override
@@ -140,10 +171,22 @@ public class TripModel implements Parcelable {
         dest.writeString(tripName);
         dest.writeString(source);
         dest.writeString(destination);
-        dest.writeString(date);
         dest.writeString(time);
         dest.writeString(direction);
         dest.writeString(repetition);
         dest.writeStringList(notes);
+        if (lat == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(lat);
+        }
+        if (longt == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(longt);
+        }
+        dest.writeLong(alarm_time);
     }
 }

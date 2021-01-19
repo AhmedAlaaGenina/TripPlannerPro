@@ -11,19 +11,17 @@ public class TripModelHistory {
     private String source;
     private String destination;
     private boolean status;
-    private String date;
     private String time;
     private String direction;
     private String repetition;
     private ArrayList<String> notes;
 
     public TripModelHistory( String tripName, String source, String destination, boolean status,
-                      String date, String time, String direction, String repetition, ArrayList<String> notes) {
+                       String time, String direction, String repetition, ArrayList<String> notes) {
         this.tripName = tripName;
         this.source = source;
         this.destination = destination;
         this.status = status;
-        this.date = date;
         this.time = time;
         this.direction = direction;
         this.repetition = repetition;
@@ -68,14 +66,6 @@ public class TripModelHistory {
 
     public void setStatus(boolean status) {
         this.status = status;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public String getTime() {

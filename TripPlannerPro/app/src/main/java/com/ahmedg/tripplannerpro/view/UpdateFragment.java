@@ -35,7 +35,7 @@ public class UpdateFragment extends Fragment {
     String[] repetition = {"daily", "weekly", "monthly", "Other"};
     String[] direction = {"One Direction", "Round Trip"};
     String repetitionWord, directionWord;
-    Button btnUpdate, btnNotes;
+    Button btnUpdate;
     TripDataBase tripDataBase;
     int id;
 
@@ -62,9 +62,10 @@ public class UpdateFragment extends Fragment {
         edtName.setText(tripModel.getTripName());
         edtStart.setText(tripModel.getSource());
         edtEnd.setText(tripModel.getDestination());
-        tvTime.setText(tripModel.getTime());
-        tvData.setText(tripModel.getDate());
-
+        String time[] = tripModel.getTime().split("_");
+        tvTime.setText(time[0]);
+        tvData.setText(time[1]);
+        String x = time[0] + "_" + time[1];
         getDirection();
         getRepetition();
 
@@ -75,8 +76,7 @@ public class UpdateFragment extends Fragment {
                         edtName.getText().toString(),
                         edtStart.getText().toString(),
                         edtEnd.getText().toString(),
-                        tvData.getText().toString(),
-                        tvTime.getText().toString(),
+                        x,
                         directionWord, repetitionWord
                 ).subscribeOn(Schedulers.computation())
                         .subscribe(new CompletableObserver() {

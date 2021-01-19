@@ -36,8 +36,9 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
         holder.tripName.setText(tripModelArrayList.get(position).getTripName());
         holder.source.setText(tripModelArrayList.get(position).getSource());
         holder.destination.setText(tripModelArrayList.get(position).getDestination());
-        holder.date.setText(tripModelArrayList.get(position).getDate());
-        holder.time.setText(tripModelArrayList.get(position).getTime());
+        String[] time = tripModelArrayList.get(position).getTime().split("_");
+        holder.time.setText(time[0]);
+//        holder.date.setText(time[1]);
 
         if (tripModelArrayList.get(position).getDirection().equals("One Direction")) {
             holder.direction.setVisibility(View.VISIBLE);
@@ -57,6 +58,7 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
     public ArrayList<TripModel> getModelArrayList() {
         return tripModelArrayList;
     }
+
     public TripModel getItem(int index) {
         return tripModelArrayList.get(index);
     }

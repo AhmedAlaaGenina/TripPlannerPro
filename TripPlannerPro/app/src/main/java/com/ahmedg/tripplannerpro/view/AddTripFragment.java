@@ -74,10 +74,11 @@ public class AddTripFragment extends Fragment {
     TripDataBase tripDataBase;
     ArrayList<String> notesList;
     Bundle bundle;
-    AlarmManager alarmManager;
+    public AlarmManager alarmManager;
     AlertReceiver alertReceiver;
-    public static double lat;
-    public static double logt;
+    double lat;
+    double logt;
+    long alarm_time;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -153,11 +154,12 @@ public class AddTripFragment extends Fragment {
                     tripName = edtTxtNameTrip.getText().toString();
                     startPoint = edtTxtStartPoint.getText().toString();
                     endPoint = edtTxtEndPoint.getText().toString();
-                    date = txtViewDate.getText().toString();
                     time = txtViewTime.getText().toString();
-                    insertNewTrip(tripName, startPoint, endPoint
-                            , date, time, directionWord, repetitionWord, notesList);
+                    date = txtViewDate.getText().toString();
+                    String x = time + "_" + date;
                     setAlarm(myHour, myMinute, myDay, myMonth, myYear);
+                    insertNewTrip(tripName, startPoint, endPoint
+                            , x, directionWord, repetitionWord, notesList, lat, logt, alarm_time);
                     edtTxtNameTrip.setText("");
                     edtTxtStartPoint.setText("");
                     edtTxtEndPoint.setText("");
@@ -173,10 +175,10 @@ public class AddTripFragment extends Fragment {
     }
 
     private void insertNewTrip(String tripName, String startPoint, String endPoint,
-                               String date, String time, String directionWord, String repetitionWord,
-                               ArrayList<String> notesList) {
+                               String time, String directionWord, String repetitionWord,
+                               ArrayList<String> notesList, double lat, double logt, long alarm_time) {
         tripDataBase.tripDao().insertTrip(new TripModel(tripName, startPoint, endPoint
-                , date, time, directionWord, repetitionWord, notesList))
+                , time, directionWord, repetitionWord, notesList, lat, logt, alarm_time))
                 .subscribeOn(Schedulers.computation())
                 .subscribe(new CompletableObserver() {
                     @Override
@@ -288,7 +290,7 @@ public class AddTripFragment extends Fragment {
         notesList = new ArrayList<>();
         bundle = this.getArguments();
         PlaceAutocompleteFragment autocompleteFragment;
-        calendar.set(myYear, myMonth, myDay, myHour, myMinute);
+        //   calendar.set(myYear, myMonth, myDay, myHour, myMinute);
         alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alertReceiver = new AlertReceiver();
 
@@ -332,6 +334,7 @@ public class AddTripFragment extends Fragment {
 //        intentA.addCategory(Intent.CATEGORY_LAUNCHER);
 //        intentA.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntentA = PendingIntent.getBroadcast(getContext(), i1, intentA, 0);
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, min);
@@ -339,11 +342,10 @@ public class AddTripFragment extends Fragment {
         calendar.set(Calendar.DATE, day);
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.SECOND, 0);
-        long alarm_time = calendar.getTimeInMillis();
+        alarm_time = calendar.getTimeInMillis();
         System.out.println(alarm_time);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarm_time, pendingIntentA);
         Toast.makeText(getContext(), "Alarm set", Toast.LENGTH_LONG).show();
-        Log.i("TAG", "setAlarm ");
         getActivity().registerReceiver(alertReceiver, new IntentFilter());
     }
 
