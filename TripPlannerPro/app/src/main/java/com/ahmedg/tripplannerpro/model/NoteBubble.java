@@ -1,6 +1,8 @@
 package com.ahmedg.tripplannerpro.model;
 
+import android.app.AlertDialog;
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
@@ -13,6 +15,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +28,7 @@ import java.util.ArrayList;
 public class NoteBubble extends Service {
     private WindowManager mWindowManager;
     private View mFloatingView;
-    ArrayList<String>arr = new ArrayList<>();
+    ArrayList<String> arr = new ArrayList<>();
 
     public NoteBubble() {
     }
@@ -54,12 +58,11 @@ public class NoteBubble extends Service {
         mWindowManager.addView(mFloatingView, params);
         final View collapsedView = mFloatingView.findViewById(R.id.collapse_view);
         final View expandedView = mFloatingView.findViewById(R.id.expanded_container);
-        RecyclerView rv =   mFloatingView.findViewById(R.id.rv);
+        RecyclerView rv = mFloatingView.findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(NoteBubble.this));
         FloatingAdapter rvAdapter = new FloatingAdapter(NoteBubble.this);
         rvAdapter.setArrayList(arr);
         rv.setAdapter(rvAdapter);
-
         ImageView closeButtonCollapsed = mFloatingView.findViewById(R.id.close_btn);
         closeButtonCollapsed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +70,20 @@ public class NoteBubble extends Service {
                 stopSelf();
             }
         });
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                arr.remove(viewHolder.getAdapterPosition());
+                rvAdapter.notifyDataSetChanged();
+            }
+        }).attachToRecyclerView(rv);
+
+
         mFloatingView.findViewById(R.id.root_container).setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
             private int initialY;
@@ -90,11 +107,10 @@ public class NoteBubble extends Service {
                         int Ydiff = (int) (event.getRawY() - initialTouchY);
 
                         if (Xdiff < 10 && Ydiff < 10) {
-                            if(expandedView.getVisibility() == View.VISIBLE &&collapsedView.getVisibility() == View.VISIBLE){
+                            if (expandedView.getVisibility() == View.VISIBLE && collapsedView.getVisibility() == View.VISIBLE) {
                                 collapsedView.setVisibility(View.VISIBLE);
                                 expandedView.setVisibility(View.GONE);
-                            }
-                            else if (isViewCollapsed()) {
+                            } else if (isViewCollapsed()) {
                                 collapsedView.setVisibility(View.VISIBLE);
                                 expandedView.setVisibility(View.VISIBLE);
                             }
@@ -114,7 +130,7 @@ public class NoteBubble extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        for (String note :intent.getStringArrayListExtra("notes")) {
+        for (String note : intent.getStringArrayListExtra("notes")) {
             arr.add(note);
 
         }
