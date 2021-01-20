@@ -8,32 +8,27 @@ Trip Planner Pro is a Android Java, Room, offline-storage, RXJava, Alerm Manager
 
 # Team Members!
 - Ahmed Alaa Eldain Atia
-> Flexible Scheduling
-> Room
-> RealTime FireBase
-> Sync Date Between Room and fireBase
-> Home Trips
-> Places Api With Mapbox API
-> UI Design
+> Flexible Scheduling.
+> Room.
+> RealTime FireBase.
+> Sync Date Between Room and fireBase.
+> Home Trips.
+> Places Api With Mapbox API.
+> UI Design.
 
 - Wesam muhamed adel abdelrahem wafa
-> Alerm Manger
-> MapBox API
-> Alert Dailoges
-> Notifaction Manager
-> Google Maps Navigation
->Mpp Activities
-> Reminders
-> UI Design
+> Alerm Manger.
+> MapBox API.
+> Alert Dailoges.
+> Notifaction Manager.
+> Google Maps Navigation.
+>Mpp Activities.
+> Reminders.
+> UI Design.
 
 - Hend Ahmed Abdelrhman Abdelmanam
-> UI Design
-> SignIn
-> SignUp
-> Authountcation
-> History Trips
-
-
-
-
- 
+> UI Design.
+> SignIn.
+> SignUp.
+> Authountcation.
+> History Trips.
