@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Button;
@@ -16,11 +18,13 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.ahmedg.tripplannerpro.model.NoteBubble;
 import com.ahmedg.tripplannerpro.model.TripDataBase;
 import com.ahmedg.tripplannerpro.model.TripModel;
 import com.ahmedg.tripplannerpro.model.TripModelHistory;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -32,10 +36,14 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class DemoActivity extends FragmentActivity {
+    private static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
+
     AlertDialog.Builder builder;
     TripDataBase tripDataBase;
     double latt, longt;
     TripModel tripModelToHistory;
+    String tripName;
+    ArrayList arrayList;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +51,7 @@ public class DemoActivity extends FragmentActivity {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
+        arrayList = new ArrayList();
         calendar.set(0, 0, 0, hour, min);
         String time = DateFormat.format("hh:mm aa", calendar).toString();
         Calendar calendar1 = Calendar.getInstance();
@@ -51,50 +60,45 @@ public class DemoActivity extends FragmentActivity {
         int day = calendar1.get(Calendar.DATE);
         String date = time + "_" + day + "/" + month + "/" + year;
         builder = new AlertDialog.Builder(this);
-        builder.setMessage("Your Trip Is Here ").setTitle("Trip Planner");
-        builder.setMessage("Time Trip!")
+        builder.setMessage("it is time for Your Trip !. ").setTitle("Trip Planner Pro")
                 .setCancelable(false)
                 .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         getLatLonByAlarmTime(date);
-
-//                        Uri location = Uri.parse("google.navigation:q=" + longt + "," + latt);
-//                        Intent intent2 = new Intent(Intent.ACTION_VIEW, location);
-//                        intent2.setPackage("com.google.android.apps.maps");
-//                        startActivity(intent2);
                         finish();
-//                        Toast.makeText(getApplicationContext(), "you choose yes action for alertbox",
-//                                Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Snooze", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //  Action for 'NO' Button
+
                         dialog.cancel();
                         NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
                         NotificationCompat.Builder nb = notificationHelper.getChannelNotification();
                         notificationHelper.getManager().notify(1, nb.build());
                         finish();
-//                        Toast.makeText(getApplicationContext(), "you choose no action for alertbox",
-//                                Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //  Action for 'NO' Button
                         finish();
                         dialog.cancel();
                         System.exit(0);
-//                        Toast.makeText(getApplicationContext(), "you choose no action for alertbox",
-//                                Toast.LENGTH_SHORT).show();
+
                     }
                 });
 
-        //Creating dialog box
         AlertDialog alert = builder.create();
-        //Setting the title manually
-        alert.setTitle("Trip Planner");
+        alert.setTitle("Trip Planner Pro");
         alert.show();
+    }
+
+    private void initializeView() {
+        Intent i = new Intent(getApplicationContext(), NoteBubble.class);
+
+        i.putExtra("notes", arrayList);
+
+        getApplicationContext().startService(i);
+        finish();
     }
 
     public void getLatLonByAlarmTime(String date) {
@@ -110,15 +114,27 @@ public class DemoActivity extends FragmentActivity {
                     @Override
                     public void onSuccess(@NonNull TripModel tripModel) {
                         Log.i("TAG", "onSuccess: " + tripModel.getId());
+                        tripName = tripModel.getTripName();
                         tripModelToHistory = tripModel;
                         latt = tripModel.getLat();
                         longt = tripModel.getLongt();
+                        if (!tripModel.getNotes().isEmpty()) {
+                            arrayList = tripModel.getNotes();
+                        }
                         setItemInHistoryDB();
                         deleteTripItem();
                         Uri location = Uri.parse("google.navigation:q=" + longt + "," + latt);
                         Intent intent2 = new Intent(Intent.ACTION_VIEW, location);
                         intent2.setPackage("com.google.android.apps.maps");
                         startActivity(intent2);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(getApplicationContext())) {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:" + getApplicationContext().getPackageName()));
+                            // intent.putExtra("index",ID);
+                            startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                        } else {
+                            initializeView();
+                        }
                     }
 
                     @Override
@@ -132,9 +148,10 @@ public class DemoActivity extends FragmentActivity {
         Log.v("HistoryDb ", "start");
 
         tripDataBase.tripDaoHistory().insertTripHistory(new TripModelHistory(tripModelToHistory.getTripName(),
-                tripModelToHistory.getSource(), tripModelToHistory.getDestination(), true,
+                tripModelToHistory.getSource(), tripModelToHistory.getDestination(), false,
                 tripModelToHistory.getTime(), tripModelToHistory.getDirection(),
-                tripModelToHistory.getRepetition(), tripModelToHistory.getNotes()))
+                tripModelToHistory.getRepetition(), tripModelToHistory.getLat(), tripModelToHistory.getLongt(),
+                tripModelToHistory.getLato(), tripModelToHistory.getLongto()))
                 .subscribeOn(Schedulers.computation())
                 .subscribe(new CompletableObserver() {
                     @Override
@@ -173,9 +190,6 @@ public class DemoActivity extends FragmentActivity {
                     }
                 });
     }
-//        CustomDialoge dialoge = new CustomDialoge();
-//
-//        dialoge.show(getSupportFragmentManager(), "wesam");
 }
 
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.ahmedg.tripplannerpro.R;
+import com.ahmedg.tripplannerpro.model.NoteBubble;
 import com.ahmedg.tripplannerpro.model.TripDataBase;
 import com.ahmedg.tripplannerpro.model.TripModel;
 import com.ahmedg.tripplannerpro.model.TripModelHistory;
@@ -36,12 +39,15 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class HomeFragment extends Fragment implements SetOnclickListener {
     public static final String ADD_TRIP_FRAGMENT = "AddTripFragment";
     public static final String NOTE_ROOM = "noteRoom";
     public static final String GET_TRIP = "getTrip";
     public static final String GET_ID = "GetID";
+    private static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     Button btnNotes;
     private int[] images = {R.drawable.status_cancel, R.drawable.status_done};
     private RecyclerView recyclerView;
@@ -52,6 +58,8 @@ public class HomeFragment extends Fragment implements SetOnclickListener {
     FirebaseDatabase firebaseDatabase;
     View view;
     double latt, longt;
+    ArrayList<String> arrayList;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,6 +108,7 @@ public class HomeFragment extends Fragment implements SetOnclickListener {
         firebaseDatabase = FirebaseDatabase.getInstance();
         myRef = firebaseDatabase.getReference().child("trips");
         newRef = myRef.push();
+        arrayList = new ArrayList<>();
         new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
     }
 
@@ -140,7 +149,7 @@ public class HomeFragment extends Fragment implements SetOnclickListener {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         Toast.makeText(view.getContext(), "Data Error", Toast.LENGTH_SHORT).show();
-                        Log.i("TAG", "onError: "+e);
+                        Log.i("TAG", "onError: " + e);
                     }
                 });
     }
@@ -192,16 +201,38 @@ public class HomeFragment extends Fragment implements SetOnclickListener {
                         Log.i("TAG", "onSuccess: " + tripModel.getId());
                         latt = tripModel.getLat();
                         longt = tripModel.getLongt();
+                        if (!tripModel.getNotes().isEmpty()) {
+                            arrayList = tripModel.getNotes();
+                        }
                         Uri location = Uri.parse("google.navigation:q=" + longt + "," + latt);
                         Intent intent2 = new Intent(Intent.ACTION_VIEW, location);
                         intent2.setPackage("com.google.android.apps.maps");
                         startActivity(intent2);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(mCtx)) {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:" + mCtx.getPackageName()));
+                            // intent.putExtra("index",ID);
+                            startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                        } else {
+                            initializeView();
+                        }
+
+
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
                     }
                 });
+    }
+
+    private void initializeView() {
+        Intent i = new Intent(mCtx, NoteBubble.class);
+
+        i.putExtra("notes", arrayList);
+
+        mCtx.startService(i);
+        getActivity().finish();
     }
 
     public void getNotes(int ID) {
@@ -243,7 +274,7 @@ public class HomeFragment extends Fragment implements SetOnclickListener {
         tripDataBase.tripDaoHistory().insertTripHistory(new TripModelHistory(tripModel.getTripName(),
                 tripModel.getSource(), tripModel.getDestination(), false,
                 tripModel.getTime(), tripModel.getDirection(),
-                tripModel.getRepetition(), tripModel.getNotes())).subscribeOn(Schedulers.computation())
+                tripModel.getRepetition(), tripModel.getLat(), tripModel.getLongt(),tripModel.getLato(),tripModel.getLongto())).subscribeOn(Schedulers.computation())
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
@@ -268,7 +299,8 @@ public class HomeFragment extends Fragment implements SetOnclickListener {
         tripDataBase.tripDaoHistory().insertTripHistory(new TripModelHistory(tripModel.getTripName(),
                 tripModel.getSource(), tripModel.getDestination(), true,
                 tripModel.getTime(), tripModel.getDirection(),
-                tripModel.getRepetition(), tripModel.getNotes())).subscribeOn(Schedulers.computation())
+                tripModel.getRepetition(), tripModel.getLat(), tripModel.getLongt(),tripModel.getLato(),tripModel.getLongto()))
+                .subscribeOn(Schedulers.computation())
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
@@ -304,6 +336,25 @@ public class HomeFragment extends Fragment implements SetOnclickListener {
 
                     }
                 });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
+            //Check if the permission is granted or not.
+            if (resultCode == RESULT_OK) {
+
+                initializeView();
+            } else { //Permission is not available
+                Toast.makeText(mCtx,
+                        "Draw over other app permission not available. Closing the application",
+                        Toast.LENGTH_SHORT).show();
+
+                getActivity().finish();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
 

@@ -1,5 +1,6 @@
 package com.ahmedg.tripplannerpro.view;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,16 +19,17 @@ import com.ahmedg.tripplannerpro.model.TripModelHistory;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class HistoryTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<TripModelHistory> tripModelArrayList = new ArrayList<>();
-    private SetOnclickListener setOnclickListener;
+    private SetOnclickListenerHistory setOnclickListenerHistory;
 
-    interface SetOnclickListener {
-        void onNoteClickListener(int index);
-    }
-
-    public void setOnItemClickListener(SetOnclickListener setOnclickListener) {
-        this.setOnclickListener = setOnclickListener;
+    public void setOnItemClickListener(SetOnclickListenerHistory setOnclickListener) {
+        this.setOnclickListenerHistory = setOnclickListener;
     }
 
     @NonNull
@@ -46,6 +48,9 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         tripViewHolder.tripName.setText(tripModelHistory.getTripName());
         tripViewHolder.source.setText(tripModelHistory.getSource());
         tripViewHolder.destination.setText(tripModelHistory.getDestination());
+        String x[] = tripModelHistory.getTime().split("_");
+        tripViewHolder.time.setText(x[0].toString());
+        tripViewHolder.date.setText(x[1].toString());
         if (tripModelHistory.isStatus()) {
             tripViewHolder.status.setVisibility(View.VISIBLE);
             tripViewHolder.status.setImageResource(R.drawable.status_done);
@@ -64,14 +69,11 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
     }
+
     public List<TripModelHistory> getModelArrayList() {
         return tripModelArrayList;
     }
 
-    //    public void setDataHistory(TripModel list) {
-//        tripModelArrayList.add(pos, list);
-//        Log.i("TAG", "setDataList: "+list);
-//    }
     public void setDataList(List<TripModelHistory> list) {
         this.tripModelArrayList = list;
         notifyDataSetChanged();
@@ -84,8 +86,8 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     class HistoryTripViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tripName, source, destination, date, time;
-        ImageView status,direction;
-        Button btnNotes;
+        ImageView status, direction;
+        Button btnMaps;
 
         public HistoryTripViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -97,18 +99,22 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             time = itemView.findViewById(R.id.timeTv);
             direction = itemView.findViewById(R.id.arrowDirectionIv);
             status = itemView.findViewById(R.id.statusIv);
-            btnNotes = itemView.findViewById(R.id.notesBtn);
-            btnNotes.setOnClickListener(this);
+            btnMaps = itemView.findViewById(R.id.mapBtn);
+            btnMaps.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (setOnclickListener != null) {
-                if (view == btnNotes) {
-                    setOnclickListener.onNoteClickListener(getAdapterPosition());
+            if (setOnclickListenerHistory != null) {
+                if (view == btnMaps) {
+                    setOnclickListenerHistory.onMapClickListener(getAdapterPosition());
                 }
 
             }
         }
     }
+
+}
+interface SetOnclickListenerHistory {
+    void onMapClickListener(int index);
 }

@@ -21,4 +21,7 @@ public interface TripDaoHistory {
     @Query("select * from trip_table_history")
     Single<List<TripModelHistory>> getAllTrips();
 
+    @Query("SELECT * FROM trip_table_history WHERE id =:id")
+    Single<TripModelHistory> getTripHistoryById(int id);
+
 }

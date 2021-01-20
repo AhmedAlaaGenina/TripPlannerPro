@@ -10,8 +10,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -91,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
     private void init() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         btnAddNewTrip = findViewById(R.id.btnAddNewTrip);
+        if (!Settings.canDrawOverlays(getApplicationContext())) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, 0);
+        }
     }
 
     private void loadFragment(Fragment fragment) {
@@ -157,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState, outPersistentState);
         getSupportFragmentManager().putFragment(outState, TAG, homeFragment);
     }
-
 
 
 }

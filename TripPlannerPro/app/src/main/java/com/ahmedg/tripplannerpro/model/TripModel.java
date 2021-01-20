@@ -22,10 +22,12 @@ public class TripModel implements Parcelable {
     private ArrayList<String> notes;
     private Double lat;
     private Double longt;
+    private Double lato;
+    private Double longto;
     private long alarm_time;
 
-    public TripModel(String tripName, String source, String destination, String time, String direction,
-                     String repetition, ArrayList<String> notes, Double lat, Double longt, long alarm_time) {
+    public TripModel(String tripName, String source, String destination, String time, String direction, String repetition,
+                     ArrayList<String> notes, Double lat, Double longt, Double lato, Double longto, long alarm_time) {
         this.tripName = tripName;
         this.source = source;
         this.destination = destination;
@@ -35,6 +37,8 @@ public class TripModel implements Parcelable {
         this.notes = notes;
         this.lat = lat;
         this.longt = longt;
+        this.lato = lato;
+        this.longto = longto;
         this.alarm_time = alarm_time;
     }
 
@@ -56,6 +60,16 @@ public class TripModel implements Parcelable {
             longt = null;
         } else {
             longt = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            lato = null;
+        } else {
+            lato = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            longto = null;
+        } else {
+            longto = in.readDouble();
         }
         alarm_time = in.readLong();
     }
@@ -152,6 +166,22 @@ public class TripModel implements Parcelable {
         this.longt = longt;
     }
 
+    public Double getLato() {
+        return lato;
+    }
+
+    public void setLato(Double lato) {
+        this.lato = lato;
+    }
+
+    public Double getLongto() {
+        return longto;
+    }
+
+    public void setLongto(Double longto) {
+        this.longto = longto;
+    }
+
     public long getAlarm_time() {
         return alarm_time;
     }
@@ -186,6 +216,18 @@ public class TripModel implements Parcelable {
         } else {
             dest.writeByte((byte) 1);
             dest.writeDouble(longt);
+        }
+        if (lato == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(lato);
+        }
+        if (longto == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(longto);
         }
         dest.writeLong(alarm_time);
     }

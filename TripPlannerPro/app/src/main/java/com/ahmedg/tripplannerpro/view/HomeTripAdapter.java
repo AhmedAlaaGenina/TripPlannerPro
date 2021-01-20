@@ -38,7 +38,7 @@ public class HomeTripAdapter extends RecyclerView.Adapter<HomeTripAdapter.HomeTr
         holder.destination.setText(tripModelArrayList.get(position).getDestination());
         String[] time = tripModelArrayList.get(position).getTime().split("_");
         holder.time.setText(time[0]);
-//        holder.date.setText(time[1]);
+        holder.date.setText(time[1]);
 
         if (tripModelArrayList.get(position).getDirection().equals("One Direction")) {
             holder.direction.setVisibility(View.VISIBLE);

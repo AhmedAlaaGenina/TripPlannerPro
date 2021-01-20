@@ -53,8 +53,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class AddTripFragment extends Fragment {
-    private static final int PLACE_API_START = 100;
-    private static final int PLACE_API_END = 101;
+    public static final int PLACE_API_START = 100;
+    public static final int PLACE_API_END = 101;
     public static final String NOTE_FRAGMENT = "NOTE_FRAGMENT";
     public static final String NOTE_BACK = "NOTE_BACK";
 
@@ -78,7 +78,10 @@ public class AddTripFragment extends Fragment {
     AlertReceiver alertReceiver;
     double lat;
     double logt;
+    double lato;
+    double longto;
     long alarm_time;
+    int iDay;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -159,7 +162,7 @@ public class AddTripFragment extends Fragment {
                     String x = time + "_" + date;
                     setAlarm(myHour, myMinute, myDay, myMonth, myYear);
                     insertNewTrip(tripName, startPoint, endPoint
-                            , x, directionWord, repetitionWord, notesList, lat, logt, alarm_time);
+                            , x, directionWord, repetitionWord, notesList, lat, logt, lato, longto, alarm_time);
                     edtTxtNameTrip.setText("");
                     edtTxtStartPoint.setText("");
                     edtTxtEndPoint.setText("");
@@ -176,9 +179,9 @@ public class AddTripFragment extends Fragment {
 
     private void insertNewTrip(String tripName, String startPoint, String endPoint,
                                String time, String directionWord, String repetitionWord,
-                               ArrayList<String> notesList, double lat, double logt, long alarm_time) {
+                               ArrayList<String> notesList, double lat, double logt, double lato, double longto, long alarm_time) {
         tripDataBase.tripDao().insertTrip(new TripModel(tripName, startPoint, endPoint
-                , time, directionWord, repetitionWord, notesList, lat, logt, alarm_time))
+                , time, directionWord, repetitionWord, notesList, lat, logt, lato, longto, alarm_time))
                 .subscribeOn(Schedulers.computation())
                 .subscribe(new CompletableObserver() {
                     @Override
@@ -196,15 +199,18 @@ public class AddTripFragment extends Fragment {
     }
 
     private void getDate() {
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                view.setMinDate(Calendar.getInstance().getTimeInMillis());
                 myYear = year;
                 myMonth = month + 1;
                 myDay = dayOfMonth;
                 txtViewDate.setText(myDay + "/" + myMonth + "/" + myYear);
             }
         }, myYear, myMonth, myDay);
+        datePickerDialog.getDatePicker().setMinDate(Calendar.getInstance().getTimeInMillis());
         datePickerDialog.show();
     }
 
@@ -213,14 +219,22 @@ public class AddTripFragment extends Fragment {
                 getActivity(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                myHour = hourOfDay;
-                myMinute = minute;
-                calendar.set(0, 0, 0, myHour, myMinute);
-                txtViewTime.setText(DateFormat.format("hh:mm aa", calendar));
-                Log.i("TAG", "onTimeSet: " + myYear + " " + myMonth + " " + myDay + " " + myHour + " " + myMinute);
+                Calendar c = Calendar.getInstance();
+                c.set(Calendar.DAY_OF_MONTH, iDay);
+                c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                c.set(Calendar.MINUTE, minute);
+                if (c.getTimeInMillis() > Calendar.getInstance().getTimeInMillis()) {
+                    myHour = hourOfDay;
+                    myMinute = minute;
+                    txtViewTime.setText(DateFormat.format("hh:mm aa", c));
+                    Log.i("TAG", "onTimeSet: " + myYear + " " + myMonth + " " + myDay + " " + myHour + " " + myMinute);
+                } else {
+                    Toast.makeText(getContext(), "Enter Valida Time", Toast.LENGTH_SHORT).show();
+                }
             }
         }, 12, 0, false
         );
+
         timePickerDialog.updateTime(myHour, myMinute);
         timePickerDialog.show();
     }
@@ -289,6 +303,7 @@ public class AddTripFragment extends Fragment {
         myDay = calendar.get(calendar.DAY_OF_MONTH);
         notesList = new ArrayList<>();
         bundle = this.getArguments();
+        iDay = calendar.get(Calendar.DAY_OF_MONTH);
         PlaceAutocompleteFragment autocompleteFragment;
         //   calendar.set(myYear, myMonth, myDay, myHour, myMinute);
         alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
@@ -309,6 +324,8 @@ public class AddTripFragment extends Fragment {
             edtTxtStartPoint.setText(selectedCarmenFeature.text());
             latLngStart = (Point) selectedCarmenFeature.geometry();
             Toast.makeText(getContext(), "Start Point : " + latLngStart.longitude() + " " + latLngStart.latitude(), Toast.LENGTH_SHORT).show();
+            longto = latLngStart.longitude();
+            lato = latLngStart.latitude();
         }
         if (requestCode == AddTripFragment.PLACE_API_END && resultCode == getActivity().RESULT_OK) {
             CarmenFeature selectedCarmenFeature = PlaceAutocomplete.getPlace(data);
@@ -329,10 +346,6 @@ public class AddTripFragment extends Fragment {
         Intent intentA = new Intent(getContext(), AlertReceiver.class);
         Random r = new Random();
         int i1 = r.nextInt(99);
-//        intentA.setFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-//        intentA.setAction(Intent.ACTION_MAIN);
-//        intentA.addCategory(Intent.CATEGORY_LAUNCHER);
-//        intentA.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntentA = PendingIntent.getBroadcast(getContext(), i1, intentA, 0);
 
         Calendar calendar = Calendar.getInstance();

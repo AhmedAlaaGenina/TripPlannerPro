@@ -51,14 +51,13 @@
             android:id="@+id/arrowDirectionIv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
             android:contentDescription="Arrow Direction"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/sourceTripTv"
             app:layout_constraintEnd_toStartOf="@+id/destinationTripTv"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/sourceTripTv"
-            app:layout_constraintTop_toTopOf="@+id/sourceTripTv"
-            />
+            app:layout_constraintTop_toTopOf="@+id/sourceTripTv" />
 
 
         <TextView
@@ -84,6 +83,8 @@
 
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/imageView"
+            app:layout_constraintEnd_toStartOf="@+id/imageView2"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toTopOf="@+id/imageView"
             app:layout_constraintVertical_bias="1.0" />
@@ -93,11 +94,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="24dp"
             android:text="12am"
             android:textColor="@color/secondary_text"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-            app:layout_constraintEnd_toEndOf="@+id/btnStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/imageView2"
             app:layout_constraintTop_toTopOf="@+id/imageView2" />
 
@@ -109,6 +112,8 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/bg_btn"
             android:text="Notes"
+            app:layout_constraintEnd_toStartOf="@+id/imageView"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sourceTripTv" />
 
@@ -141,8 +146,10 @@
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="36dp"
+            app:layout_constraintEnd_toStartOf="@+id/dateTv"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/notesBtn"
             app:layout_constraintTop_toBottomOf="@+id/arrowDirectionIv"
             app:srcCompat="@drawable/calendar" />
@@ -152,8 +159,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/dateTv"
+            app:layout_constraintEnd_toStartOf="@+id/timeTv"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/dateTv"
-            app:layout_constraintTop_toTopOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="@+id/dateTv"
             app:srcCompat="@drawable/time" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,7 +28,6 @@ public class ForgetPasswordDailogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_forget_password_dailog, container, false);
         mCtx = getActivity();
         mEmail = view.findViewById(R.id.email_dialog_fragment_et);

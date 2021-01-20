@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +32,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements SetOnclickListenerHistory {
 
+    private static final String MAP_FRAGMENT = "Map_Fragment";
     private int[] images = {R.drawable.status_cancel, R.drawable.status_done};
 
     private RecyclerView recyclerView;
@@ -68,6 +70,7 @@ public class HistoryFragment extends Fragment {
                     }).show();
         }
     };
+
     public void getTrips() {
         tripDataBase.tripDaoHistory().getAllTrips().subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -87,6 +90,7 @@ public class HistoryFragment extends Fragment {
                     }
                 });
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +110,7 @@ public class HistoryFragment extends Fragment {
         init();
         return view;
     }
+
     private void getDataFromHistoryDB() {
         tripDataBase.tripDaoHistory().getAllTrips().subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -125,17 +130,20 @@ public class HistoryFragment extends Fragment {
                     }
                 });
     }
-    private void init(){
+
+    private void init() {
         recyclerView = view.findViewById(R.id.historyRv);
         tripDataBase = TripDataBase.getInstance(getContext());
         mCtx = getActivity();
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(mCtx));
         historyTripAdapter = new HistoryTripAdapter();
+        historyTripAdapter.setOnItemClickListener(this);
         getDataFromHistoryDB();
         recyclerView.setAdapter(historyTripAdapter);
         new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
     }
+
     public void deleteTripItem(RecyclerView.ViewHolder viewHolder) {
         tripDataBase.tripDaoHistory().deleteTripHistory(historyTripAdapter.getModelArrayList().get(viewHolder.getAdapterPosition())).subscribeOn(Schedulers.computation())
                 .subscribe(new CompletableObserver() {
@@ -153,5 +161,45 @@ public class HistoryFragment extends Fragment {
 
                     }
                 });
+    }
+
+    public void getMap(int ID) {
+        int myID = historyTripAdapter.getModelArrayList().get(ID).getId();
+        tripDataBase.tripDaoHistory().getTripHistoryById(historyTripAdapter.getModelArrayList().get(ID).getId())
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<TripModelHistory>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull TripModelHistory tripModelHistory) {
+                        Bundle bundle = new Bundle();
+                        bundle.putDouble("lattt", tripModelHistory.getLat());
+                        bundle.putDouble("longttt", tripModelHistory.getLongt());
+                        bundle.putDouble("lattto", tripModelHistory.getLato());
+                        bundle.putDouble("longttto", tripModelHistory.getLongto());
+                        MapFragment mapFragment = new MapFragment();
+                        mapFragment.setArguments(bundle);
+                        Log.i("TAG", "onSuccess: " + myID);
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.container, mapFragment, MAP_FRAGMENT)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+                });
+    }
+
+    @Override
+    public void onMapClickListener(int index) {
+        getMap(index);
     }
 }

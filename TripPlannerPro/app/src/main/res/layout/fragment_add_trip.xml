@@ -79,9 +79,10 @@
 
     <Button
         android:id="@+id/btnAddThisTrip"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
+        android:background="@drawable/bg_btn"
         android:text="@string/add_this_trip"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -91,8 +92,9 @@
 
     <Button
         android:id="@+id/btnAddNotes"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_btn"
         android:text="@string/addNotes"
         app:layout_constraintBottom_toTopOf="@+id/btnAddThisTrip"
         app:layout_constraintEnd_toEndOf="parent"

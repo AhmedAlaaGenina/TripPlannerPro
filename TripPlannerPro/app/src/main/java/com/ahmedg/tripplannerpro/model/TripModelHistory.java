@@ -14,10 +14,13 @@ public class TripModelHistory {
     private String time;
     private String direction;
     private String repetition;
-    private ArrayList<String> notes;
+    private Double lat;
+    private Double longt;
+    private Double lato;
+    private Double longto;
 
-    public TripModelHistory( String tripName, String source, String destination, boolean status,
-                       String time, String direction, String repetition, ArrayList<String> notes) {
+    public TripModelHistory(String tripName, String source, String destination, boolean status, String time,
+                            String direction, String repetition, Double lat, Double longt, Double lato, Double longto) {
         this.tripName = tripName;
         this.source = source;
         this.destination = destination;
@@ -25,7 +28,10 @@ public class TripModelHistory {
         this.time = time;
         this.direction = direction;
         this.repetition = repetition;
-        this.notes = notes;
+        this.lat = lat;
+        this.longt = longt;
+        this.lato = lato;
+        this.longto = longto;
     }
 
     public int getId() {
@@ -92,11 +98,35 @@ public class TripModelHistory {
         this.repetition = repetition;
     }
 
-    public  ArrayList<String> getNotes() {
-        return notes;
+    public Double getLat() {
+        return lat;
     }
 
-    public void setNotes(ArrayList<String> notes) {
-        this.notes = notes;
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLongt() {
+        return longt;
+    }
+
+    public void setLongt(Double longt) {
+        this.longt = longt;
+    }
+
+    public Double getLato() {
+        return lato;
+    }
+
+    public void setLato(Double lato) {
+        this.lato = lato;
+    }
+
+    public Double getLongto() {
+        return longto;
+    }
+
+    public void setLongto(Double longto) {
+        this.longto = longto;
     }
 }
