@@ -124,7 +124,7 @@ public class UpdateFragment extends Fragment {
 
                             @Override
                             public void onComplete() {
-                                Toast.makeText(view.getContext(), "All Data is Updated", Toast.LENGTH_SHORT).show();
+                             //   Toast.makeText(view.getContext(), "All Data is Updated", Toast.LENGTH_SHORT).show();
 
                             }
 

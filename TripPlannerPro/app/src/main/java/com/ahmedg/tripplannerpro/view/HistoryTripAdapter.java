@@ -53,11 +53,11 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         tripViewHolder.date.setText(x[1].toString());
         if (tripModelHistory.isStatus()) {
             tripViewHolder.status.setVisibility(View.VISIBLE);
-            tripViewHolder.status.setImageResource(R.drawable.status_done);
+            tripViewHolder.status.setImageResource(R.drawable.done);
 
         } else {
             tripViewHolder.status.setVisibility(View.VISIBLE);
-            tripViewHolder.status.setImageResource(R.drawable.status_cancel);
+            tripViewHolder.status.setImageResource(R.drawable.ic_baseline_clear_24);
         }
         if (tripModelArrayList.get(position).getDirection().equals("One Direction")) {
             tripViewHolder.direction.setVisibility(View.VISIBLE);
@@ -115,6 +115,7 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 }
+
 interface SetOnclickListenerHistory {
     void onMapClickListener(int index);
 }
